@@ -58,6 +58,12 @@ def _link_mismatches(html: str):
     return out
 
 
+def dangerous_ext(filename: str) -> str | None:
+    name = filename.lower()
+    ext = name[name.rfind("."):] if "." in name else ""
+    return ext if ext in DANGEROUS_EXT else None
+
+
 def _lev(a: str, b: str) -> int:
     prev = list(range(len(b) + 1))
     for i, ca in enumerate(a, 1):
@@ -92,9 +98,8 @@ def analyze_content(email, iocs):
     if len(URGENCY.findall(f"{email.subject} {email.text}")) >= 2:
         out.append(finding("urgency_language", "Multiple urgency/pressure phrases in subject or body"))
     for a in email.attachments:
-        name = a.filename.lower()
-        ext = name[name.rfind("."):] if "." in name else ""
-        if ext in DANGEROUS_EXT:
+        ext = dangerous_ext(a.filename)
+        if ext:
             out.append(finding("dangerous_extension", f"Attachment '{a.filename}' has a risky file type ({ext})"))
     for shown, real in _link_mismatches(email.html):
         out.append(finding("link_text_mismatch",

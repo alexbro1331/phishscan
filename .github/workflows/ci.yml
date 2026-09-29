@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest -q
+      - name: CLI smoke test
+        run: |
+          python -m examples.make_examples
+          python -m phishscan examples/phishing.eml --offline || test $? -eq 2
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t phishscan:ci .
+      - name: Run container and smoke test
+        run: |
+          docker run -d --name ps -p 8000:8000 -e PHISHSCAN_OFFLINE=1 phishscan:ci
+          for i in $(seq 1 20); do curl -fs http://127.0.0.1:8000/healthz && break || sleep 1; done
+          curl -fs -F "eml=@examples/phishing.eml" http://127.0.0.1:8000/api/analyze | grep -q '"label": "Malicious"'
+          docker logs ps

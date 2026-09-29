@@ -1,42 +1,114 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>PhishScan report</title>
-<style>
-body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
-.banner{padding:1.2rem;border-radius:8px;color:#fff;font-size:1.4rem;font-weight:700}
-.Safe{background:#2e7d32}.Suspicious{background:#ef6c00}.Malicious{background:#c62828}
-table{border-collapse:collapse;width:100%;margin:.5rem 0 1.5rem}th,td{border:1px solid #ddd;padding:.4rem .6rem;text-align:left;font-size:.9rem}
-th{background:#f5f5f5}code{word-break:break-all}.note{background:#fff8e1;padding:.6rem;border-left:4px solid #f9a825;margin:.4rem 0}
-</style></head><body>
-<h1>PhishScan report</h1>
-<div class="banner {{ a.verdict.label }}">{{ a.verdict.label }} &mdash; risk score {{ a.verdict.score }}/100</div>
-<p><b>Subject:</b> {{ a.email.subject }}<br><b>From:</b> {{ a.email.from_display }} &lt;{{ a.email.from_addr }}&gt;</p>
+{% extends "base.html.j2" %}
+{% block title %}PhishScan &middot; {{ r.label }} &middot; {{ r.subject or "(no subject)" }}{% endblock %}
+{% block content %}
+<section class="card hero v-{{ r.label }}" aria-label="Verdict">
+  <svg class="gauge" viewBox="0 0 140 140" role="img" aria-label="Risk score {{ r.score }} out of 100">
+    <circle class="track" cx="70" cy="70" r="{{ r.radius }}" fill="none" stroke-width="12"/>
+    <circle class="bar" cx="70" cy="70" r="{{ r.radius }}" fill="none" stroke-width="12"
+      stroke-dasharray="{{ r.dash }} {{ r.circ }}" transform="rotate(-90 70 70)"/>
+    <text x="70" y="76" font-size="34" font-weight="800">{{ r.score }}</text>
+    <text x="70" y="96" font-size="11" class="muted" style="fill:var(--muted)">/ 100 risk</text>
+  </svg>
+  <div>
+    <span class="pill">Verdict: {{ r.label }}</span>
+    <h1>{{ r.headline }}</h1>
+    <div class="muted">{{ r.summary }}</div>
+    <dl class="facts">
+      <dt>Subject</dt><dd>{{ r.subject or "(none)" }}</dd>
+      <dt>From</dt><dd>{% if r.from_display %}{{ r.from_display }} {% endif %}&lt;{{ r.from_addr or "unknown" }}&gt;</dd>
+      {% if r.to_addr %}<dt>To</dt><dd>{{ r.to_addr }}</dd>{% endif %}
+      {% if r.date %}<dt>Date</dt><dd>{{ r.date }}</dd>{% endif %}
+      {% if r.message_id %}<dt>Message-ID</dt><dd class="mono">{{ r.message_id }}</dd>{% endif %}
+    </dl>
+  </div>
+</section>
 
-<h2>Why this verdict</h2>
-<table><tr><th>Finding</th><th>Points</th><th>MITRE</th></tr>
-{% for f in a.verdict.findings %}<tr><td>{{ f.reason }}</td><td>+{{ f.points }}</td><td>{{ f.mitre or "" }}</td></tr>
-{% else %}<tr><td colspan="3">No risk indicators found.</td></tr>{% endfor %}</table>
+{% for n in r.notes %}<div class="note">{{ n }}</div>{% endfor %}
 
-<h2>Email authentication</h2>
-<table><tr><th>Mechanism</th><th>Result</th></tr>
-{% for k, v in a.auth_results.items() %}<tr><td>{{ k | upper }}</td><td>{{ v }}</td></tr>
-{% else %}<tr><td colspan="2">No Authentication-Results header present.</td></tr>{% endfor %}</table>
+<section class="card">
+  <h2>Why this verdict <span class="n">{{ r.findings | length }} finding{{ "" if r.findings | length == 1 else "s" }}</span></h2>
+  {% for f in r.findings %}
+  <div class="finding {{ f.sev }}">
+    <div class="pts">+{{ f.points }}</div>
+    <div class="txt">
+      <div class="rule">{{ f.rule }}</div>
+      <div class="msg">{{ f.reason }}</div>
+      {% if f.mitre %}<span class="chip">{{ f.mitre }} &middot; {{ f.mitre_name }}</span>{% endif %}
+    </div>
+  </div>
+  {% else %}<p class="empty">No risk indicators found.</p>{% endfor %}
+</section>
 
-<h2>Indicators of compromise (defanged)</h2>
-<table><tr><th>Type</th><th>Value</th></tr>
-{% for u in a.iocs.urls %}<tr><td>URL</td><td><code>{{ u | defang }}</code></td></tr>{% endfor %}
-{% for i in a.iocs.ips %}<tr><td>IP</td><td><code>{{ i | defang }}</code></td></tr>{% endfor %}
-{% for n, h in a.iocs.hashes %}<tr><td>SHA256</td><td>{{ n }}<br><code>{{ h }}</code></td></tr>{% endfor %}</table>
+<section class="card">
+  <h2>Email authentication</h2>
+  <div class="tiles">
+    {% for t in r.auth %}<div class="tile {{ t.cls }}"><div class="k">{{ t.name }}</div><div class="v">{{ t.result }}</div></div>{% endfor %}
+  </div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Results are read from the receiving mail server's headers (not re-verified). A missing result means the server did not record one.</p>
+</section>
 
-<h2>Reputation lookups</h2>
-<table><tr><th>Source</th><th>Indicator</th><th>Result</th></tr>
-{% for r in a.enrichment %}<tr><td>{{ r.source }}</td><td><code>{{ r.indicator | defang }}</code></td>
-<td>{% if r.error %}error: {{ r.error }}{% elif r.score is not none %}abuse score {{ r.score }}%{% else %}{{ r.malicious }}/{{ r.total }} detections{% endif %}</td></tr>
-{% else %}<tr><td colspan="3">No lookups performed.</td></tr>{% endfor %}</table>
-{% for n in a.notes %}<div class="note">{{ n }}</div>{% endfor %}
+<section class="card">
+  <h2>Mail route <span class="n">{{ r.hops | length }} hop{{ "" if r.hops | length == 1 else "s" }}</span></h2>
+  {% if r.hops %}
+  <ol class="route">
+    {% for h in r.hops %}<li>
+      <div class="h">{{ h.by or "unknown server" }}</div>
+      <div class="m">{% if h.frm %}received from {{ h.frm }}{% endif %}{% if h.ip %} &middot; <code>{{ h.ip }}</code>{% endif %}{% if h.time %} &middot; {{ h.time }}{% endif %}</div>
+    </li>{% endfor %}
+  </ol>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Listed from the first hop (closest to the sender) to the last. Hops added by the sender can be forged; trust the ones added by your own provider.</p>
+  {% else %}<p class="empty">No Received headers present.</p>{% endif %}
+</section>
 
-<h2>MITRE ATT&amp;CK</h2>
-<ul>{% for i, n in a.techniques %}<li>{{ i }} &mdash; {{ n }}</li>{% else %}<li>None mapped.</li>{% endfor %}</ul>
+<section class="card">
+  <h2>Attachments <span class="n">{{ r.attachments | length }}</span></h2>
+  {% if r.attachments %}
+  <div class="table-scroll"><table class="data">
+    <tr><th>File</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Status</th></tr>
+    {% for a in r.attachments %}<tr>
+      <td>{{ a.filename }}</td><td>{{ a.content_type }}</td><td>{{ a.size }}</td><td><code>{{ a.sha256 }}</code></td>
+      <td>{% for c in a.chips %}<span class="chip {{ c.cls }}">{{ c.text }}</span>{% endfor %}</td>
+    </tr>{% endfor %}
+  </table></div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Attachments are hashed only &mdash; never opened or executed.</p>
+  {% else %}<p class="empty">No attachments.</p>{% endif %}
+</section>
 
-<h2>Recommended actions</h2>
-<ul>{% for x in actions %}<li>{{ x }}</li>{% endfor %}</ul>
-</body></html>
+<section class="card">
+  <h2>Indicators of compromise <span class="n">{{ r.iocs | length }}</span></h2>
+  {% if r.iocs %}
+  <div class="table-scroll"><table class="data">
+    <tr><th>Type</th><th>Indicator (defanged)</th><th>Reputation</th></tr>
+    {% for i in r.iocs %}<tr>
+      <td>{{ i.type }}</td><td><code>{{ i.value }}</code></td>
+      <td>{% for c in i.chips %}<span class="chip {{ c.cls }}">{{ c.text }}</span>{% else %}<span class="muted">not checked</span>{% endfor %}</td>
+    </tr>{% endfor %}
+  </table></div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Indicators are defanged so they cannot be clicked by accident. Re-fang only inside an isolated analysis environment.</p>
+  {% else %}<p class="empty">No URLs, domains or IPs found.</p>{% endif %}
+</section>
+
+<div class="grid-2">
+<section class="card">
+  <h2>MITRE ATT&amp;CK</h2>
+  {% for t in r.techniques %}<p style="margin:0 0 8px"><span class="chip">{{ t.id }}</span> {{ t.name }}</p>{% else %}<p class="empty">No techniques mapped.</p>{% endfor %}
+</section>
+<section class="card v-{{ r.label }}">
+  <h2>Recommended actions</h2>
+  <ul class="actions">{% for x in r.actions %}<li>{{ x }}</li>{% endfor %}</ul>
+</section>
+</div>
+
+<section class="card">
+  <h2>Message headers <span class="n">{{ r.headers | length }}</span></h2>
+  <details><summary>Show all headers</summary>
+    <div class="table-scroll"><table class="data">
+      {% for k, v in r.headers %}<tr><td style="white-space:nowrap"><b>{{ k }}</b></td><td class="mono">{{ v }}</td></tr>{% endfor %}
+    </table></div>
+  </details>
+</section>
+
+<p class="foot">Generated by PhishScan v{{ version }} on {{ r.analyzed_at }}<br>
+Message SHA-256: <span class="mono">{{ r.email_sha256 }}</span><br>
+Automated triage aid &mdash; a human analyst should confirm the verdict before taking action.</p>
+{% endblock %}

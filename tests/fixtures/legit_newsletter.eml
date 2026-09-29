@@ -1,0 +1,20 @@
+Received: from mail.acme-corp.com (mail.acme-corp.com [198.51.100.7])
+        by mx.google.com with ESMTPS id q1; Tue, 16 Jan 2024 03:00:01 -0800 (PST)
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@acme-corp.com;
+       spf=pass smtp.mailfrom=bounce@mail.acme-corp.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=acme-corp.com
+Return-Path: <bounce@mail.acme-corp.com>
+From: Acme Weekly <news@acme-corp.com>
+Reply-To: support@acme-corp.com
+To: reader@example.org
+Subject: Your weekly digest is here
+Date: Tue, 16 Jan 2024 11:00:00 +0000
+Message-ID: <digest-2024-03@mail.acme-corp.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<html><body><p>Hi! Here is what's new this week.</p>
+<p><a href="https://mail.acme-corp.com/track?id=1">Read online</a> &middot;
+<a href="https://www.acme-corp.com/blog">www.acme-corp.com/blog</a> &middot;
+<a href="https://mail.acme-corp.com/unsubscribe?u=1">Unsubscribe</a></p></body></html>
