@@ -32,9 +32,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build image
         run: docker build -t phishscan:ci .
+      - name: Refuses to start on a network address without a password
+        run: |
+          if docker run --rm phishscan:ci; then echo "container started without a password" && exit 1; fi
       - name: Run container and smoke test
         run: |
-          docker run -d --name ps -p 8000:8000 -e PHISHSCAN_OFFLINE=1 phishscan:ci
+          docker run -d --name ps -p 8000:8000 -e PHISHSCAN_PASSWORD=ci-password -e PHISHSCAN_API_TOKEN=ci-token phishscan:ci
           for i in $(seq 1 20); do curl -fs http://127.0.0.1:8000/healthz && break || sleep 1; done
-          curl -fs -F "eml=@examples/phishing.eml" http://127.0.0.1:8000/api/analyze | grep -q '"label": "Malicious"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/)" = "302"      # dashboard requires login
+          test "$(curl -s -o /dev/null -w '%{http_code}' -F eml=@examples/phishing.eml http://127.0.0.1:8000/api/analyze)" = "401"
+          curl -fs -H "Authorization: Bearer ci-token" -F "eml=@examples/phishing.eml" http://127.0.0.1:8000/api/analyze | grep -q '"label": "Malicious"'
           docker logs ps

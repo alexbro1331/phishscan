@@ -1,296 +1,535 @@
+
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<title>PhishScan &middot; Malicious &middot; Your account is suspended</title>
-<style>:root{--bg:#f3f5fa;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e3e8f1;--brand:#4f46e5;--brand-2:#7c3aed;
---ok:#15803d;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--bad:#b91c1c;--bad-bg:#fee2e2;--info:#4338ca;--info-bg:#eef2ff;
---code-bg:#f1f5f9;--shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px rgba(15,23,42,.07);--radius:14px}
-@media (prefers-color-scheme:dark){:root{--bg:#0a1020;--card:#111a2f;--ink:#e7edf8;--muted:#94a3bd;--line:#22304b;--brand:#8b93ff;--brand-2:#a78bfa;
---ok:#4ade80;--ok-bg:#12321f;--warn:#fbbf24;--warn-bg:#38290b;--bad:#fb7185;--bad-bg:#3b141b;--info:#a5b4fc;--info-bg:#1b2244;--code-bg:#0b1326;--shadow:none}}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
-a{color:var(--brand)}
-code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace;font-size:.86em}
-code{background:var(--code-bg);padding:.1em .4em;border-radius:6px;word-break:break-all}
-.topbar{background:linear-gradient(120deg,#1e1b4b,#3730a3 55%,#6d28d9);color:#fff}
-.topbar .in{max-width:1080px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;gap:12px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem;letter-spacing:.2px;color:#fff;text-decoration:none}
-.brand svg{width:28px;height:28px}
-.tag{margin-left:auto;font-size:.8rem;opacity:.85}
-.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 48px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin:0 0 18px}
-.card>h2{margin:0 0 14px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
-.card>h2 .n{font-size:.75rem;font-weight:600;color:var(--muted);background:var(--code-bg);border-radius:999px;padding:1px 9px}
-.muted{color:var(--muted)}
-.hero{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:center;border-top:6px solid var(--vc)}
-.v-Safe{--vc:var(--ok);--vbg:var(--ok-bg)}.v-Suspicious{--vc:var(--warn);--vbg:var(--warn-bg)}.v-Malicious{--vc:var(--bad);--vbg:var(--bad-bg)}
-.gauge{width:180px;height:180px;margin:auto}
-.gauge .track{stroke:var(--line)}.gauge .bar{stroke:var(--vc);stroke-linecap:round;transition:none}
-.gauge text{fill:var(--ink);text-anchor:middle}
-.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-weight:700;font-size:.85rem;letter-spacing:.6px;text-transform:uppercase;color:var(--vc);background:var(--vbg)}
-.hero h1{margin:8px 0 6px;font-size:1.55rem;line-height:1.25}
-.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:14px 0 0;font-size:.9rem}
-.facts dt{color:var(--muted)}.facts dd{margin:0;word-break:break-word}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.tile{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.tile .k{font-size:.75rem;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
-.tile .v{font-size:1.3rem;font-weight:700;margin-top:2px}
-.tile.ok{background:var(--ok-bg)}.tile.ok .v{color:var(--ok)}
-.tile.bad{background:var(--bad-bg)}.tile.bad .v{color:var(--bad)}
-.tile.warn{background:var(--warn-bg)}.tile.warn .v{color:var(--warn)}
-.finding{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:10px;padding:12px 14px;margin:0 0 10px}
-.finding.high{border-left-color:var(--bad)}.finding.medium{border-left-color:var(--warn)}.finding.low{border-left-color:var(--info)}
-.finding .pts{min-width:52px;text-align:center;font-weight:800;font-size:1.05rem;border-radius:8px;padding:4px 0}
-.finding.high .pts{background:var(--bad-bg);color:var(--bad)}.finding.medium .pts{background:var(--warn-bg);color:var(--warn)}.finding.low .pts{background:var(--info-bg);color:var(--info)}
-.finding .txt{flex:1;min-width:0}.finding .rule{font-size:.72rem;color:var(--muted);letter-spacing:.7px;text-transform:uppercase}
-.finding .msg{word-break:break-word}
-.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--info-bg);color:var(--info);margin:2px 4px 2px 0;white-space:nowrap}
-.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.warn{background:var(--warn-bg);color:var(--warn)}
-.table-scroll{overflow-x:auto}
-table.data{border-collapse:collapse;width:100%;font-size:.88rem}
-table.data th{text-align:left;font-size:.72rem;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line);padding:8px 10px;white-space:nowrap}
-table.data td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word}
-table.data tr:last-child td{border-bottom:0}
-.route{list-style:none;margin:0;padding:0}
-.route li{position:relative;padding:0 0 16px 30px;margin:0}
-.route li:before{content:"";position:absolute;left:8px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--brand)}
-.route li:after{content:"";position:absolute;left:12px;top:18px;bottom:-2px;width:2px;background:var(--line)}
-.route li:last-child{padding-bottom:0}.route li:last-child:after{display:none}
-.route .h{font-weight:600}.route .m{font-size:.84rem;color:var(--muted)}
-ul.actions{list-style:none;margin:0;padding:0}
-ul.actions li{padding:10px 12px 10px 38px;position:relative;border:1px solid var(--line);border-radius:10px;margin:0 0 8px}
-ul.actions li:before{content:"";position:absolute;left:12px;top:13px;width:16px;height:16px;border:2px solid var(--vc);border-radius:5px}
-.note{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 14px;margin:0 0 10px;font-size:.9rem}
-.empty{color:var(--muted);font-style:italic}
-details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
-details summary{cursor:pointer;font-weight:600}
-details[open] summary{margin-bottom:10px}
-.foot{color:var(--muted);font-size:.8rem;text-align:center;margin-top:26px;line-height:1.7}
-.btn{display:inline-block;background:linear-gradient(120deg,#4f46e5,#7c3aed);color:#fff;border:0;border-radius:10px;padding:12px 22px;font:600 1rem inherit;cursor:pointer;text-decoration:none}
-.btn:hover{filter:brightness(1.08)}
-.upload{border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;background:var(--card)}
-.upload input[type=file]{display:block;margin:14px auto;max-width:100%}
-.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.features .card{margin:0}
-.lead{font-size:1.05rem;color:var(--muted);max-width:720px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media (max-width:760px){.hero,.tiles,.features,.grid-2{grid-template-columns:1fr}.gauge{width:150px;height:150px}.tag{display:none}}
-@media print{body{background:#fff}.topbar{background:#312e81!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.card{box-shadow:none;break-inside:avoid}details{display:block}details>*{display:block}}</style>
-</head><body>
-<header class="topbar"><div class="in">
-<a class="brand" href="#">
-<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 4 7v8c0 7.2 5 12.9 12 15 7-2.100 12-7.800 12-15V7L16 2Z" fill="#fff" fill-opacity=".18" stroke="#fff" stroke-width="2"/><path d="m10.500 16 4 4 7.500-8" stroke="#fff" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"/></svg>
-PhishScan</a>
-<span class="tag">Phishing email triage &middot; v1.0.0</span>
-</div></header>
-<main class="wrap">
+<title>PhishScan · Malicious · Your account is suspended</title>
+<style>/* PhishScan design system. Tokens -> layout -> components -> motion -> print. */
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,Menlo,monospace;
+  --r:8px;--r-sm:5px;
+  --bg:#f3f4f6;--panel:#fff;--panel-2:#f7f8fa;--line:#e2e5ea;--line-2:#cfd5dd;
+  --text:#141b24;--muted:#5b6878;--faint:#8792a1;
+  --accent:#2f5fd7;--accent-text:#2450bf;--accent-bg:#e8eefc;
+  --red:#cf3038;--red-bg:#fdeceb;--amber:#a86200;--amber-bg:#fff2d9;--green:#17784a;--green-bg:#e3f4eb;
+  --shadow:0 1px 2px rgba(20,27,36,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --bg:#0a0e13;--panel:#10161d;--panel-2:#141b24;--line:#1e2833;--line-2:#2a3746;
+  --text:#e6ebf1;--muted:#92a0b0;--faint:#66758a;
+  --accent:#4c7dff;--accent-text:#8fb1ff;--accent-bg:#15223f;
+  --red:#ff6a70;--red-bg:#2b1519;--amber:#f5a524;--amber-bg:#2b2010;--green:#3dd68c;--green-bg:#0e2a1e;--shadow:none}}
+:root[data-theme=dark]{
+  --bg:#0a0e13;--panel:#10161d;--panel-2:#141b24;--line:#1e2833;--line-2:#2a3746;
+  --text:#e6ebf1;--muted:#92a0b0;--faint:#66758a;
+  --accent:#4c7dff;--accent-text:#8fb1ff;--accent-bg:#15223f;
+  --red:#ff6a70;--red-bg:#2b1519;--amber:#f5a524;--amber-bg:#2b2010;--green:#3dd68c;--green-bg:#0e2a1e;--shadow:none}
+.v-Safe{--vc:var(--green);--vbg:var(--green-bg)}
+.v-Suspicious{--vc:var(--amber);--vbg:var(--amber-bg)}
+.v-Malicious{--vc:var(--red);--vbg:var(--red-bg)}
 
-<section class="card hero v-Malicious" aria-label="Verdict">
-  <svg class="gauge" viewBox="0 0 140 140" role="img" aria-label="Risk score 100 out of 100">
-    <circle class="track" cx="70" cy="70" r="58" fill="none" stroke-width="12"/>
-    <circle class="bar" cx="70" cy="70" r="58" fill="none" stroke-width="12"
-      stroke-dasharray="364.4 364.4" transform="rotate(-90 70 70)"/>
-    <text x="70" y="76" font-size="34" font-weight="800">100</text>
-    <text x="70" y="96" font-size="11" class="muted" style="fill:var(--muted)">/ 100 risk</text>
-  </svg>
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;color-scheme:light dark}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--accent-text)}
+h1,h2,h3,p{margin:0}
+code,.mono{font-family:var(--mono);font-size:.9em}
+code{background:var(--panel-2);border:1px solid var(--line);padding:0 .35em;border-radius:4px;word-break:break-all}
+.muted{color:var(--muted)}.faint{color:var(--faint)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:16px 12px;background:var(--panel);border-right:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;color:var(--text);text-decoration:none;font-weight:650;font-size:15px;letter-spacing:-.01em}
+.brand svg{width:26px;height:26px;flex:none}
+.brand small{display:block;font-weight:500;font-size:11px;color:var(--faint);letter-spacing:.02em}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-weight:500;transition:background .15s,color .15s}
+.nav a svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav a:hover{background:var(--panel-2);color:var(--text)}
+.nav a[aria-current=page]{background:var(--accent-bg);color:var(--accent-text)}
+.nav .n{margin-left:auto;font:600 11px var(--mono);padding:1px 6px;border-radius:9px;background:var(--red-bg);color:var(--red)}
+.side-foot{margin-top:auto;display:grid;gap:10px;font-size:12px;color:var(--muted)}
+.status{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel-2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+.dot.on{background:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+.iconbtn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--muted);cursor:pointer}
+.iconbtn:hover{color:var(--text);border-color:var(--line-2)}
+.iconbtn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.main{min-width:0}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 28px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top h1{font-size:15px;font-weight:650;letter-spacing:-.01em}
+.crumb{color:var(--faint);font-size:13px}
+.spacer{flex:1}
+.search{position:relative;width:min(300px,34vw)}
+.search input{width:100%;padding:7px 10px 7px 30px}
+.search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--faint);fill:none;stroke-width:2;pointer-events:none}
+.search kbd{position:absolute;right:8px;top:50%;transform:translateY(-50%);font:11px var(--mono);color:var(--faint);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+.page{padding:22px 28px 64px;max-width:1280px}
+.stack>*+*{margin-top:14px}
+.grid{display:grid;gap:14px}
+.g-2-1{grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.g-1-1{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-main-side{grid-template-columns:minmax(0,1fr) 320px;align-items:start}
+
+/* ---------- controls ---------- */
+input[type=text],input[type=search],input[type=password],select,textarea{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line-2);border-radius:6px;padding:7px 10px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+textarea{width:100%;resize:vertical;min-height:120px;line-height:1.5}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid var(--line-2);border-radius:6px;background:var(--panel);color:var(--text);font:600 13px var(--font);text-decoration:none;cursor:pointer;transition:background .15s,border-color .15s,transform .05s}
+.btn:hover{background:var(--panel-2);border-color:var(--faint)}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,var(--line))}
+.btn.danger:hover{background:var(--red-bg)}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.seg-tabs{display:inline-flex;border:1px solid var(--line-2);border-radius:6px;overflow:hidden;background:var(--panel)}
+.seg-tabs a{padding:5px 11px;color:var(--muted);text-decoration:none;font-weight:600;font-size:12.5px;border-right:1px solid var(--line)}
+.seg-tabs a:last-child{border-right:0}
+.seg-tabs a:hover{background:var(--panel-2);color:var(--text)}
+.seg-tabs a[aria-current=true]{background:var(--accent-bg);color:var(--accent-text)}
+
+/* ---------- panels, tables, badges ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.panel-h{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--line)}
+.panel-h h2{font:600 11px var(--font);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.panel-h .c{font:600 11px var(--mono);color:var(--faint)}
+.panel-b{padding:16px}
+.panel-b.flush{padding:0}
+.note{padding:10px 14px;border-radius:6px;background:var(--amber-bg);color:var(--amber);font-size:13px}
+.table-wrap{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;font:600 11px var(--font);letter-spacing:.07em;text-transform:uppercase;color:var(--faint);padding:9px 16px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel-2)}
+table.t td{padding:10px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tbody tr{transition:background .12s}
+table.t tbody tr:hover{background:var(--panel-2)}
+table.t tr[data-href]{cursor:pointer}
+table.t a.row-link{color:var(--text);font-weight:600;text-decoration:none}
+table.t a.row-link:hover{color:var(--accent-text)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.trunc{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trunc .sub{font-size:12px;color:var(--faint);overflow:hidden;text-overflow:ellipsis}
+.panel.col{display:flex;flex-direction:column}
+.panel.col>.panel-b{flex:1;display:flex;align-items:center}
+.panel.col .donut-wrap{width:100%;justify-content:space-around}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:1px 8px;border-radius:4px;font:650 11.5px/20px var(--font);color:var(--vc);background:var(--vbg);letter-spacing:.02em}
+.badge:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;border:1px solid var(--line-2);font:600 11.5px/18px var(--font);color:var(--muted);white-space:nowrap}
+.pill.new{color:var(--accent-text);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:var(--accent-bg)}
+.pill.investigating{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 45%,var(--line));background:var(--amber-bg)}
+.pill.resolved{color:var(--green);border-color:color-mix(in srgb,var(--green) 40%,var(--line));background:var(--green-bg)}
+.scorebar{display:inline-block;vertical-align:middle;width:54px;height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-left:8px}
+.scorebar i{display:block;height:100%;background:var(--vc);transform-origin:left;animation:fill .8s cubic-bezier(.2,.8,.2,1) both}
+.chip{display:inline-flex;align-items:center;gap:5px;font:600 11.5px/18px var(--font);padding:0 7px;margin:1px 4px 1px 0;border-radius:4px;background:var(--accent-bg);color:var(--accent-text);white-space:nowrap}
+.chip.bad{background:var(--red-bg);color:var(--red)}.chip.warn{background:var(--amber-bg);color:var(--amber)}.chip.ok{background:var(--green-bg);color:var(--green)}
+.chip.mute{background:var(--panel-2);color:var(--muted);border:1px solid var(--line)}
+.pager{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.empty{padding:44px 20px;text-align:center;color:var(--muted)}
+.empty h3{color:var(--text);font-size:15px;margin-bottom:6px}
+.empty .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
+/* ---------- dashboard ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi{position:relative;overflow:hidden;padding:14px 16px 14px 18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--vc,var(--line-2))}
+.kpi .l{font:600 11px var(--font);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font:600 30px/1.1 var(--mono);margin-top:9px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.kpi .s{font-size:12px;color:var(--faint);margin-top:4px}
+.kpi svg.spark{position:absolute;right:12px;bottom:12px;width:84px;height:26px;opacity:.9}
+.spark polyline{fill:none;stroke:var(--vc,var(--faint));stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:200;animation:draw 1.1s ease-out both}
+.chart svg{display:block;width:100%;height:auto}
+.chart .grid{stroke:var(--line);stroke-dasharray:2 4}
+.chart text{fill:var(--faint);font:10px var(--mono)}
+.chart .seg{transform-box:fill-box;transform-origin:bottom;animation:grow .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*28ms)}
+.chart .seg.malicious,.legend .malicious:before{fill:var(--red);background:var(--red)}
+.chart .seg.suspicious,.legend .suspicious:before{fill:var(--amber);background:var(--amber)}
+.chart .seg.safe,.legend .safe:before{fill:var(--green);background:var(--green)}
+.chart .hit{fill:transparent}.chart .hit:hover{fill:color-mix(in srgb,var(--text) 6%,transparent)}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend span:before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut{width:132px;height:132px;flex:none;transform:rotate(-90deg)}
+.donut circle{fill:none;stroke-width:11}
+.donut .ring{stroke:var(--line)}
+.donut .arc{animation:sweep .9s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*120ms)}
+.donut .arc.malicious{stroke:var(--red)}.donut .arc.suspicious{stroke:var(--amber)}.donut .arc.safe{stroke:var(--green)}
+.donut-mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.donut-mid b{display:block;font:600 24px/1 var(--mono)}.donut-mid span{font-size:11px;color:var(--faint)}
+.dl{display:grid;gap:8px;flex:1;font-size:13px}
+.dl div{display:flex;align-items:center;gap:8px}
+.dl .sw{width:8px;height:8px;border-radius:2px}
+.dl b{margin-left:auto;font:600 13px var(--mono)}
+.hbars{display:grid;gap:11px}
+.hbar .top2{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:4px}
+.hbar .top2 b{font:600 12px var(--mono);color:var(--muted)}
+.hbar .track{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.hbar .track i{display:block;height:100%;background:var(--accent);border-radius:3px;transform-origin:left;animation:fill .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*70ms)}
+
+/* ---------- drop zone + scan overlay ---------- */
+.drop{display:flex;align-items:center;gap:18px;padding:18px 20px;border:1.5px dashed var(--line-2);border-radius:var(--r);background:var(--panel);transition:border-color .15s,background .15s}
+.drop.over{border-color:var(--accent);background:var(--accent-bg)}
+.drop .ic{width:40px;height:40px;border-radius:8px;background:var(--accent-bg);color:var(--accent-text);display:grid;place-items:center;flex:none}
+.drop .ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.drop b{display:block;font-size:14px}.drop span.h{color:var(--muted);font-size:12.5px}
+.drop .act{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.drop.big{flex-direction:column;justify-content:center;text-align:center;padding:44px 20px}
+.drop.big .act{margin:8px 0 0}
+.overlay{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(4,7,11,.62);backdrop-filter:blur(3px)}
+.overlay.show{display:grid;animation:fade .2s both}
+.scan{width:min(440px,92vw);background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.scan h3{font-size:15px;margin-bottom:14px}
+.scan-vis{position:relative;height:104px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);overflow:hidden;padding:14px}
+.scan-vis i{display:block;height:7px;border-radius:4px;background:var(--line-2);margin-bottom:9px}
+.scan-vis i:nth-child(1){width:38%}.scan-vis i:nth-child(2){width:72%}.scan-vis i:nth-child(3){width:58%}.scan-vis i:nth-child(4){width:84%}
+.scan-vis:after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 14px var(--accent);animation:scan 1.3s ease-in-out infinite alternate}
+.steps{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;font-size:13px;color:var(--faint)}
+.steps li{display:flex;align-items:center;gap:9px;transition:color .2s}
+.steps li:before{content:"";width:14px;height:14px;border-radius:50%;border:1.5px solid var(--line-2);flex:none;transition:all .2s}
+.steps li.active{color:var(--text)}.steps li.active:before{border-color:var(--accent);border-top-color:transparent;animation:spin .7s linear infinite}
+.steps li.done{color:var(--muted)}.steps li.done:before{background:var(--green);border-color:var(--green)}
+.scan .err{margin-top:14px;padding:10px 12px;border-radius:6px;background:var(--red-bg);color:var(--red);font-size:13px}
+
+/* ---------- verdict + report ---------- */
+.hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;padding:22px 24px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--vc);border-radius:var(--r);box-shadow:var(--shadow)}
+.hero .score{min-width:150px}
+.hero .lab{font:600 11px var(--font);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.hero .big{font:600 68px/1 var(--mono);letter-spacing:-.04em;color:var(--vc);margin:8px 0 12px;font-variant-numeric:tabular-nums}
+.hero .big small{font-size:16px;color:var(--faint);letter-spacing:0;margin-left:4px}
+.meter{position:relative;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--green) 0 30%,var(--amber) 30% 60%,var(--red) 60% 100%);opacity:.55}
+.meter i{position:absolute;top:-6px;width:3px;height:18px;border-radius:2px;background:var(--text);left:calc(var(--s) * 1%);margin-left:-1px;animation:slide 1.1s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 0 0 2px var(--panel)}
+.meter-l{position:relative;height:14px;margin-top:7px;font:10px var(--mono);color:var(--faint)}
+.meter-l span{position:absolute;top:0;transform:translateX(-50%)}
+.meter-l span:first-child{transform:none}.meter-l span:last-child{transform:translateX(-100%)}
+.hero h1{font-size:21px;line-height:1.3;letter-spacing:-.015em;margin:6px 0 6px}
+.hero .why{color:var(--muted);max-width:60ch}
+.facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 16px;margin:16px 0 0;font-size:13px}
+.facts dt{color:var(--faint)}.facts dd{margin:0;word-break:break-word}
+.doit{border-left:4px solid var(--vc)}
+.doit ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.doit li label{display:flex;gap:11px;align-items:flex-start;padding:8px 6px;border-radius:6px;cursor:pointer}
+.doit li label:hover{background:var(--panel-2)}
+.doit input{appearance:none;width:17px;height:17px;margin:2px 0 0;border:1.5px solid var(--line-2);border-radius:4px;flex:none;display:grid;place-items:center;background:var(--panel);cursor:pointer;transition:all .15s}
+.doit input:checked{background:var(--green);border-color:var(--green)}
+.doit input:checked:after{content:"";width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.doit input:checked+span{color:var(--faint);text-decoration:line-through}
+.finding{display:grid;grid-template-columns:46px minmax(0,1fr);gap:14px;padding:13px 16px;border-top:1px solid var(--line)}
+.finding:first-child{border-top:0}
+.finding .pts{align-self:start;text-align:center;font:700 13px/22px var(--mono);border-radius:5px}
+.finding.high .pts{background:var(--red-bg);color:var(--red)}
+.finding.medium .pts{background:var(--amber-bg);color:var(--amber)}
+.finding.low .pts{background:var(--accent-bg);color:var(--accent-text)}
+.finding h3{font-size:13.5px;font-weight:650;margin-bottom:2px}
+.finding p{color:var(--muted);font-size:13px;word-break:break-word}
+.auth3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.auth-c{border:1px solid var(--line);border-radius:6px;padding:11px 13px;background:var(--panel-2)}
+.auth-c .k{font:600 11px var(--font);letter-spacing:.09em;color:var(--muted)}
+.auth-c .v{font:650 15px var(--mono);margin-top:4px}
+.auth-c.ok .v{color:var(--green)}.auth-c.bad .v{color:var(--red)}.auth-c.warn .v{color:var(--amber)}
+.auth-c.bad{border-color:color-mix(in srgb,var(--red) 40%,var(--line))}
+.route{list-style:none;margin:0;padding:0}
+.route li{position:relative;padding:0 0 15px 26px}
+.route li:before{content:"";position:absolute;left:3px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--panel);border:2px solid var(--accent)}
+.route li:after{content:"";position:absolute;left:7px;top:17px;bottom:-1px;width:1.5px;background:var(--line-2)}
+.route li:last-child{padding-bottom:0}.route li:last-child:after{display:none}
+.route b{font-weight:650}.route .m{font-size:12.5px;color:var(--muted)}
+.kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 14px;font-size:12.5px;margin:0}
+.kv dt{color:var(--faint)}.kv dd{margin:0;word-break:break-all}
+.hint{font-size:12px;color:var(--faint);margin-top:12px}
+details.hdrs summary{cursor:pointer;font-weight:600;color:var(--accent-text);padding:12px 16px}
+details.hdrs .table-wrap{border-top:1px solid var(--line)}
+.copy{cursor:pointer;border:0;background:transparent;color:var(--faint);padding:2px 4px;border-radius:4px;font:inherit}
+.copy:hover{color:var(--accent-text);background:var(--accent-bg)}
+.head-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.case-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.case-top .ttl{min-width:0;flex:1}
+.case-top h1{font-size:19px;letter-spacing:-.015em;overflow-wrap:anywhere}
+.saved{font-size:12px;color:var(--faint);transition:opacity .3s}
+
+/* ---------- misc ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .panel{width:min(380px,100%);padding:28px}
+.login .brand{padding:0 0 18px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-weight:600;font-size:12.5px}
+.field input{width:100%}
+.err-text{color:var(--red);font-size:13px;margin-bottom:12px}
+.toasts{position:fixed;right:20px;bottom:20px;display:grid;gap:8px;z-index:80}
+.toast{padding:10px 14px;border-radius:8px;background:var(--text);color:var(--bg);font-weight:600;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.25);animation:toast .25s both}
+dialog{border:1px solid var(--line-2);border-radius:12px;background:var(--panel);color:var(--text);padding:22px;width:min(420px,92vw)}
+dialog::backdrop{background:rgba(4,7,11,.6);backdrop-filter:blur(2px)}
+dialog h3{margin-bottom:8px}dialog .row{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.standalone{max-width:1000px;margin:0 auto;padding:22px 20px 56px}
+.standalone .brand{padding-bottom:18px}
+.foot{color:var(--faint);font-size:12px;text-align:center;margin-top:26px;line-height:1.7}
+.tabs-note{font-size:12.5px;color:var(--muted)}
+
+/* ---------- motion ---------- */
+.rise{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+@keyframes fade{from{opacity:0}}
+@keyframes grow{from{transform:scaleY(0)}}
+@keyframes fill{from{transform:scaleX(0)}}
+@keyframes draw{from{stroke-dashoffset:200}to{stroke-dashoffset:0}}
+@keyframes slide{from{left:0}}
+@keyframes sweep{from{stroke-dasharray:0 var(--c)}}
+@keyframes scan{from{top:0}to{top:calc(100% - 2px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes toast{from{opacity:0;transform:translateY(8px)}}
+.pulse{animation:pulse 1.6s ease-out 2}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--vc) 55%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* ---------- responsive + print ---------- */
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.g-2-1,.g-1-1,.g-main-side{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;flex-direction:row;align-items:center;gap:8px;padding:8px 12px;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{padding:0 8px 0 0}.brand small,.side-foot .status{display:none}
+  .nav{flex-direction:row}.side-foot{margin:0 0 0 auto;display:flex}
+  .top{padding:10px 16px}.page{padding:16px}.search{display:none}
+  .hero{grid-template-columns:minmax(0,1fr)}.auth3{grid-template-columns:minmax(0,1fr)}
+  .drop{flex-direction:column;align-items:flex-start}.drop .act{margin:0}
+}
+@media print{
+  body{background:#fff;color:#000}.side,.top,.overlay,.toasts,.head-actions,.drop{display:none!important}
+  .shell{display:block}.panel,.hero,.kpi{box-shadow:none;break-inside:avoid}.page{padding:0;max-width:none}
+  details.hdrs[open] .table-wrap,details.hdrs .table-wrap{display:block}
+}</style>
+</head>
+<body>
+<div class="standalone">
+  <a class="brand" href="#"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="2.5" y="6.5" width="27" height="19" rx="4.5" stroke="currentColor" stroke-width="2"/><path d="M4.5 9.5 16 18l11.5-8.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="7" r="4.2" fill="#e5484d" stroke="var(--panel,#fff)" stroke-width="2"/></svg><span>PhishScan<small>Email triage console</small></span></a>
+  
+<div class="stack">
+  <section class="hero v-Malicious rise" aria-label="Verdict">
+  <div class="score">
+    <div class="lab">Risk score</div>
+    <div class="big"><span data-count="100">100</span><small>/100</small></div>
+    <div class="meter" style="--s:100" role="img" aria-label="Score 100 of 100"><i></i></div>
+    <div class="meter-l"><span style="left:0">0</span><span style="left:30%">30</span><span style="left:60%">60</span><span style="left:100%">100</span></div>
+  </div>
   <div>
-    <span class="pill">Verdict: Malicious</span>
+    <span class="badge pulse">Malicious</span>
     <h1>This message is very likely phishing or spoofing</h1>
-    <div class="muted">Multiple strong indicators were detected. Do not interact with it and escalate to your security team.</div>
+    <p class="why">Multiple strong indicators were detected. Do not interact with it and escalate to your security team.</p>
     <dl class="facts">
       <dt>Subject</dt><dd>Your account is suspended</dd>
       <dt>From</dt><dd>PayPal Support &lt;support@paypa1.com&gt;</dd>
       <dt>To</dt><dd>bob@example.org</dd>
       
-      
     </dl>
   </div>
 </section>
-
-<div class="note">Enrichment skipped (offline mode or no API keys); verdict uses header and content analysis only.</div>
-
-<section class="card">
-  <h2>Why this verdict <span class="n">9 findings</span></h2>
+<div class="note rise" style="--i:1">Enrichment skipped (offline mode or no API keys); verdict uses header and content analysis only.</div>
+  <section class="panel doit v-Malicious rise" style="--i:2">
+  <div class="panel-h"><h2>What to do now</h2></div>
+  <div class="panel-b"><ul>
+    <li><label><input type="checkbox"><span>Do NOT click links or open attachments.</span></label></li><li><label><input type="checkbox"><span>Quarantine or delete the message for all recipients.</span></label></li><li><label><input type="checkbox"><span>Block the sender domain and the listed indicators at the mail gateway and proxy.</span></label></li><li><label><input type="checkbox"><span>If anyone interacted with it, reset their credentials and start incident response.</span></label></li>
+  </ul></div>
+</section>
   
-  <div class="finding high">
-    <div class="pts">+25</div>
-    <div class="txt">
-      <div class="rule">dmarc fail</div>
-      <div class="msg">DMARC result: fail</div>
-      <span class="chip">T1672 &middot; Email Spoofing</span>
+<section class="panel rise" style="--i:3">
+  <div class="panel-h"><h2>Why this verdict</h2><span class="c">10 findings</span></div>
+  <div class="panel-b flush">
+    
+    <div class="finding high">
+      <div class="pts">+25</div>
+      <div>
+        <h3>DMARC failed</h3>
+        <p>DMARC result: fail</p>
+        <span class="chip">T1672 · Email Spoofing</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding high">
-    <div class="pts">+25</div>
-    <div class="txt">
-      <div class="rule">dangerous extension</div>
-      <div class="msg">Attachment &#39;invoice.pdf.exe&#39; has a risky file type (.exe)</div>
-      <span class="chip">T1566.001 &middot; Phishing: Spearphishing Attachment</span>
+    
+    <div class="finding high">
+      <div class="pts">+25</div>
+      <div>
+        <h3>Risky attachment type</h3>
+        <p>Attachment &#39;invoice.pdf.exe&#39; has a risky file type (.exe)</p>
+        <span class="chip">T1566.001 · Phishing: Spearphishing Attachment</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding high">
-    <div class="pts">+25</div>
-    <div class="txt">
-      <div class="rule">link text mismatch</div>
-      <div class="msg">Link text shows www[.]paypal[.]com but points to secure-paypa1-login[.]ru</div>
-      <span class="chip">T1566.002 &middot; Phishing: Spearphishing Link</span>
+    
+    <div class="finding high">
+      <div class="pts">+25</div>
+      <div>
+        <h3>Link text hides the real destination</h3>
+        <p>Link text shows www[.]paypal[.]com but points to secure-paypa1-login[.]ru</p>
+        <span class="chip">T1566.002 · Phishing: Spearphishing Link</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding high">
-    <div class="pts">+25</div>
-    <div class="txt">
-      <div class="rule">lookalike domain</div>
-      <div class="msg">Sender domain &#39;paypa1.com&#39; imitates the brand &#39;paypal&#39;</div>
-      <span class="chip">T1656 &middot; Impersonation</span>
+    
+    <div class="finding high">
+      <div class="pts">+25</div>
+      <div>
+        <h3>Look-alike sender domain</h3>
+        <p>Sender domain &#39;paypa1.com&#39; imitates the brand &#39;paypal&#39;</p>
+        <span class="chip">T1656 · Impersonation</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding medium">
-    <div class="pts">+15</div>
-    <div class="txt">
-      <div class="rule">spf fail</div>
-      <div class="msg">SPF result: fail</div>
-      <span class="chip">T1672 &middot; Email Spoofing</span>
+    
+    <div class="finding medium">
+      <div class="pts">+20</div>
+      <div>
+        <h3>Brand name, wrong sender</h3>
+        <p>Display name mentions &#39;paypal&#39; but the message was sent from paypa1[.]com</p>
+        <span class="chip">T1656 · Impersonation</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding medium">
-    <div class="pts">+15</div>
-    <div class="txt">
-      <div class="rule">dkim fail</div>
-      <div class="msg">DKIM result: fail</div>
-      <span class="chip">T1672 &middot; Email Spoofing</span>
+    
+    <div class="finding medium">
+      <div class="pts">+15</div>
+      <div>
+        <h3>SPF failed</h3>
+        <p>SPF result: fail</p>
+        <span class="chip">T1672 · Email Spoofing</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding medium">
-    <div class="pts">+15</div>
-    <div class="txt">
-      <div class="rule">reply to mismatch</div>
-      <div class="msg">Reply-To domain (evil-mail.ru) differs from From domain (paypa1.com)</div>
-      <span class="chip">T1656 &middot; Impersonation</span>
+    
+    <div class="finding medium">
+      <div class="pts">+15</div>
+      <div>
+        <h3>DKIM failed</h3>
+        <p>DKIM result: fail</p>
+        <span class="chip">T1672 · Email Spoofing</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding low">
-    <div class="pts">+10</div>
-    <div class="txt">
-      <div class="rule">url shortener</div>
-      <div class="msg">URL shortener used (bit.ly) hides the real destination</div>
-      <span class="chip">T1566.002 &middot; Phishing: Spearphishing Link</span>
+    
+    <div class="finding medium">
+      <div class="pts">+15</div>
+      <div>
+        <h3>Replies go to a different domain</h3>
+        <p>Reply-To domain (evil-mail.ru) differs from From domain (paypa1.com)</p>
+        <span class="chip">T1656 · Impersonation</span>
+      </div>
     </div>
-  </div>
-  
-  <div class="finding low">
-    <div class="pts">+10</div>
-    <div class="txt">
-      <div class="rule">urgency language</div>
-      <div class="msg">Multiple urgency/pressure phrases in subject or body</div>
-      
+    
+    <div class="finding low">
+      <div class="pts">+10</div>
+      <div>
+        <h3>Shortened link</h3>
+        <p>URL shortener used (bit.ly) hides the real destination</p>
+        <span class="chip">T1566.002 · Phishing: Spearphishing Link</span>
+      </div>
     </div>
+    
+    <div class="finding low">
+      <div class="pts">+10</div>
+      <div>
+        <h3>Pressure language</h3>
+        <p>Multiple urgency/pressure phrases in subject or body</p>
+        
+      </div>
+    </div>
+    
   </div>
-  
 </section>
 
-<section class="card">
-  <h2>Email authentication</h2>
-  <div class="tiles">
-    <div class="tile bad"><div class="k">SPF</div><div class="v">FAIL</div></div><div class="tile bad"><div class="k">DKIM</div><div class="v">FAIL</div></div><div class="tile bad"><div class="k">DMARC</div><div class="v">FAIL</div></div>
+<section class="panel rise" style="--i:4">
+  <div class="panel-h"><h2>Email authentication</h2></div>
+  <div class="panel-b">
+    <div class="auth3">
+      <div class="auth-c bad"><div class="k">SPF</div><div class="v">FAIL</div></div><div class="auth-c bad"><div class="k">DKIM</div><div class="v">FAIL</div></div><div class="auth-c bad"><div class="k">DMARC</div><div class="v">FAIL</div></div>
+    </div>
+    <p class="hint">Read from the receiving mail server's headers, not re-verified here. "Not present" means the server did not record a result.</p>
   </div>
-  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Results are read from the receiving mail server's headers (not re-verified). A missing result means the server did not record one.</p>
 </section>
 
-<section class="card">
-  <h2>Mail route <span class="n">2 hops</span></h2>
-  
-  <ol class="route">
-    <li>
-      <div class="h">mx[.]google[.]com</div>
-      <div class="m">received from mail[.]evil-mail[.]ru &middot; <code>203[.]0[.]113[.]50</code> &middot; Mon, 15 Jan 2024 09:12:44 +0000</div>
-    </li><li>
-      <div class="h">inbox[.]example[.]org</div>
-      <div class="m">received from mx[.]google[.]com &middot; <code>8[.]8[.]8[.]8</code> &middot; Mon, 15 Jan 2024 09:12:46 +0000</div>
-    </li>
-  </ol>
-  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Listed from the first hop (closest to the sender) to the last. Hops added by the sender can be forged; trust the ones added by your own provider.</p>
-  
+<section class="panel rise" style="--i:5">
+  <div class="panel-h"><h2>Mail route</h2><span class="c">2 hops</span></div>
+  <div class="panel-b">
+    
+    <ol class="route">
+      <li><b>mx[.]google[.]com</b>
+        <div class="m">received from mail[.]evil-mail[.]ru · <code>203[.]0[.]113[.]50</code> · Mon, 15 Jan 2024 09:12:44 +0000</div></li><li><b>inbox[.]example[.]org</b>
+        <div class="m">received from mx[.]google[.]com · <code>8[.]8[.]8[.]8</code> · Mon, 15 Jan 2024 09:12:46 +0000</div></li>
+    </ol>
+    <p class="hint">Oldest hop first. Hops added by the sender can be forged; trust the ones added by your own provider.</p>
+    
+  </div>
 </section>
 
-<section class="card">
-  <h2>Attachments <span class="n">1</span></h2>
+<section class="panel rise" style="--i:6">
+  <div class="panel-h"><h2>Attachments</h2><span class="c">1</span></div>
   
-  <div class="table-scroll"><table class="data">
-    <tr><th>File</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Status</th></tr>
-    <tr>
-      <td>invoice.pdf.exe</td><td>application/octet-stream</td><td>15 B</td><td><code>71a3ed4dada577a57e0ac581d0335b18b04497385cb981e78a203a0215b889cf</code></td>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>File</th><th>Type</th><th class="num">Size</th><th>SHA-256</th><th>Status</th></tr></thead>
+    <tbody><tr>
+      <td><b>invoice.pdf.exe</b></td><td class="muted">application/octet-stream</td><td class="num">15 B</td>
+      <td><code>71a3ed4dada577a57e0ac581d0335b18b04497385cb981e78a203a0215b889cf</code></td>
       <td><span class="chip bad">risky type .exe</span></td>
-    </tr>
+    </tr></tbody>
   </table></div>
-  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Attachments are hashed only &mdash; never opened or executed.</p>
+  <div class="panel-b"><p class="hint" style="margin:0">Attachments are hashed only, never opened or executed.</p></div>
   
 </section>
 
-<section class="card">
-  <h2>Indicators of compromise <span class="n">7</span></h2>
+<section class="panel rise" style="--i:7">
+  <div class="panel-h"><h2>Indicators of compromise</h2><span class="c">7</span></div>
   
-  <div class="table-scroll"><table class="data">
-    <tr><th>Type</th><th>Indicator (defanged)</th><th>Reputation</th></tr>
-    <tr>
-      <td>URL</td><td><code>hxxp://bit[.]ly/3xYz</code></td>
-      <td><span class="muted">not checked</span></td>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Type</th><th>Indicator (defanged)</th><th>Reputation</th></tr></thead>
+    <tbody><tr>
+      <td><span class="chip mute">URL</span></td>
+      <td><code>hxxp://bit[.]ly/3xYz</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>URL</td><td><code>hxxp://secure-paypa1-login[.]ru/verify</code></td>
-      <td><span class="muted">not checked</span></td>
+      <td><span class="chip mute">URL</span></td>
+      <td><code>hxxp://secure-paypa1-login[.]ru/verify</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>URL</td><td><code>hxxps://www[.]paypal[.]com/verify</code></td>
-      <td><span class="muted">not checked</span></td>
+      <td><span class="chip mute">URL</span></td>
+      <td><code>hxxps://www[.]paypal[.]com/verify</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>Domain</td><td><code>bit[.]ly</code></td>
-      <td><span class="muted">not checked</span></td>
+      <td><span class="chip mute">Domain</span></td>
+      <td><code>bit[.]ly</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>Domain</td><td><code>secure-paypa1-login[.]ru</code></td>
-      <td><span class="muted">not checked</span></td>
+      <td><span class="chip mute">Domain</span></td>
+      <td><code>secure-paypa1-login[.]ru</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>Domain</td><td><code>www[.]paypal[.]com</code></td>
-      <td><span class="muted">not checked</span></td>
+      <td><span class="chip mute">Domain</span></td>
+      <td><code>www[.]paypal[.]com</code></td>
+      <td><span class="faint">not checked</span></td>
     </tr><tr>
-      <td>IP</td><td><code>8[.]8[.]8[.]8</code></td>
-      <td><span class="muted">not checked</span></td>
-    </tr>
+      <td><span class="chip mute">IP</span></td>
+      <td><code>8[.]8[.]8[.]8</code></td>
+      <td><span class="faint">not checked</span></td>
+    </tr></tbody>
   </table></div>
-  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Indicators are defanged so they cannot be clicked by accident. Re-fang only inside an isolated analysis environment.</p>
+  <div class="panel-b"><p class="hint" style="margin:0">Defanged so nothing can be clicked by accident. Re-fang only inside an isolated analysis environment.</p></div>
   
 </section>
 
-<div class="grid-2">
-<section class="card">
-  <h2>MITRE ATT&amp;CK</h2>
-  <p style="margin:0 0 8px"><span class="chip">T1672</span> Email Spoofing</p><p style="margin:0 0 8px"><span class="chip">T1566.001</span> Phishing: Spearphishing Attachment</p><p style="margin:0 0 8px"><span class="chip">T1566.002</span> Phishing: Spearphishing Link</p><p style="margin:0 0 8px"><span class="chip">T1656</span> Impersonation</p>
+<section class="panel rise" style="--i:8">
+  <div class="panel-h"><h2>MITRE ATT&amp;CK</h2></div>
+  <div class="panel-b">
+    <div style="margin-bottom:6px"><span class="chip">T1672</span> Email Spoofing</div><div style="margin-bottom:6px"><span class="chip">T1566.001</span> Phishing: Spearphishing Attachment</div><div style="margin-bottom:6px"><span class="chip">T1566.002</span> Phishing: Spearphishing Link</div><div style="margin-bottom:6px"><span class="chip">T1656</span> Impersonation</div>
+  </div>
 </section>
-<section class="card v-Malicious">
-  <h2>Recommended actions</h2>
-  <ul class="actions"><li>Do NOT click links or open attachments.</li><li>Quarantine or delete the message for all recipients.</li><li>Block the sender domain and the listed indicators at the mail gateway and proxy.</li><li>If anyone interacted with it, reset their credentials and start incident response.</li></ul>
-</section>
-</div>
 
-<section class="card">
-  <h2>Message headers <span class="n">9</span></h2>
-  <details><summary>Show all headers</summary>
-    <div class="table-scroll"><table class="data">
-      <tr><td style="white-space:nowrap"><b>From</b></td><td class="mono">PayPal Support &lt;support@paypa1.com&gt;</td></tr><tr><td style="white-space:nowrap"><b>To</b></td><td class="mono">bob@example.org</td></tr><tr><td style="white-space:nowrap"><b>Subject</b></td><td class="mono">Your account is suspended</td></tr><tr><td style="white-space:nowrap"><b>Reply-To</b></td><td class="mono">pay@evil-mail.ru</td></tr><tr><td style="white-space:nowrap"><b>Authentication-Results</b></td><td class="mono">mx; spf=fail; dkim=fail; dmarc=fail</td></tr><tr><td style="white-space:nowrap"><b>Received</b></td><td class="mono">from mx.google.com (mx.google.com [8.8.8.8]) by inbox.example.org with ESMTPS; Mon, 15 Jan 2024 09:12:46 +0000</td></tr><tr><td style="white-space:nowrap"><b>Received</b></td><td class="mono">from mail.evil-mail.ru (mail.evil-mail.ru [203.0.113.50]) by mx.google.com with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000</td></tr><tr><td style="white-space:nowrap"><b>MIME-Version</b></td><td class="mono">1.0</td></tr><tr><td style="white-space:nowrap"><b>Content-Type</b></td><td class="mono">multipart/mixed; boundary=&#34;===============4399838721788787628==&#34;</td></tr>
-    </table></div>
+<section class="panel rise" style="--i:9">
+  <details class="hdrs"><summary>Message headers (9)</summary>
+    <div class="table-wrap"><table class="t"><tbody>
+      <tr><td style="white-space:nowrap;vertical-align:top"><b>From</b></td><td class="mono" style="word-break:break-all">PayPal Support &lt;support@paypa1.com&gt;</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>To</b></td><td class="mono" style="word-break:break-all">bob@example.org</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Subject</b></td><td class="mono" style="word-break:break-all">Your account is suspended</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Reply-To</b></td><td class="mono" style="word-break:break-all">pay@evil-mail.ru</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Authentication-Results</b></td><td class="mono" style="word-break:break-all">mx; spf=fail; dkim=fail; dmarc=fail</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Received</b></td><td class="mono" style="word-break:break-all">from mx.google.com (mx.google.com [8.8.8.8]) by inbox.example.org with ESMTPS; Mon, 15 Jan 2024 09:12:46 +0000</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Received</b></td><td class="mono" style="word-break:break-all">from mail.evil-mail.ru (mail.evil-mail.ru [203.0.113.50]) by mx.google.com with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>MIME-Version</b></td><td class="mono" style="word-break:break-all">1.0</td></tr><tr><td style="white-space:nowrap;vertical-align:top"><b>Content-Type</b></td><td class="mono" style="word-break:break-all">multipart/mixed; boundary=&#34;===============7227283238041609184==&#34;</td></tr>
+    </tbody></table></div>
   </details>
 </section>
+</div>
+<p class="foot">Generated by PhishScan v1.0.0 on 2026-09-29T16:14:06Z<br>
+Message SHA-256: <span class="mono">18b7662d3def14a79b0216e3b9db61d88839bbf762e7ac68a3c4ba60be78f136</span><br>
+Automated triage aid. A human analyst should confirm the verdict before taking action.</p>
 
-<p class="foot">Generated by PhishScan v1.0.0 on 2026-09-29T15:46:24Z<br>
-Message SHA-256: <span class="mono">ff21101552851902fa4f8bfc43fd4fbaa59ebf1272ea04c5a82c30b2d1e73121</span><br>
-Automated triage aid &mdash; a human analyst should confirm the verdict before taking action.</p>
-
-</main>
-</body></html>
+</div>
+</body>
+</html>

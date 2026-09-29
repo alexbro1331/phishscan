@@ -8,19 +8,19 @@ Received: from mx.google.com (mx.google.com [8.8.8.8]) by inbox.example.org
 Received: from mail.evil-mail.ru (mail.evil-mail.ru [203.0.113.50]) by
  mx.google.com with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4399838721788787628=="
+Content-Type: multipart/mixed; boundary="===============7227283238041609184=="
 
---===============4399838721788787628==
+--===============7227283238041609184==
 Content-Type: multipart/alternative;
- boundary="===============6854475152805676931=="
+ boundary="===============9208464377755616562=="
 
---===============6854475152805676931==
+--===============9208464377755616562==
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
 URGENT: verify your account immediately: http://bit.ly/3xYz
 
---===============6854475152805676931==
+--===============9208464377755616562==
 Content-Type: text/html; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -29,9 +29,9 @@ MIME-Version: 1.0
 p><p><a href=3D"http://secure-paypa1-login.ru/verify">https://www.paypal.com/=
 verify</a></p>
 
---===============6854475152805676931==--
+--===============9208464377755616562==--
 
---===============4399838721788787628==
+--===============7227283238041609184==
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="invoice.pdf.exe"
@@ -39,4 +39,4 @@ MIME-Version: 1.0
 
 TVogZmFrZSBwYXlsb2Fk
 
---===============4399838721788787628==--
+--===============7227283238041609184==--

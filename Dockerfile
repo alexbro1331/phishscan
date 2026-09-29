@@ -5,6 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PHISHSCAN_HOST=0.0.0.0 \
     PORT=8000 \
+    PHISHSCAN_DB=/data/phishscan.db \
     PHISHSCAN_CACHE_DIR=/data
 
 WORKDIR /app
@@ -18,7 +19,9 @@ USER phishscan
 VOLUME /data
 EXPOSE 8000
 
+# /healthz is public (no login) so orchestrators can probe it.
 HEALTHCHECK --interval=30s --timeout=4s --start-period=10s --retries=3 \
   CMD python -c "import os,urllib.request as u; u.urlopen('http://127.0.0.1:%s/healthz' % os.environ.get('PORT','8000'), timeout=3)"
 
+# Listens on 0.0.0.0, so the server refuses to start unless PHISHSCAN_PASSWORD is set.
 CMD ["phishscan", "serve"]
