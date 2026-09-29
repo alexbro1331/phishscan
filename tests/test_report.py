@@ -23,3 +23,36 @@ def test_json_report(write_eml):
     data = json.loads(render_json(analyze(write_eml(auth="mx; spf=fail; dkim=pass; dmarc=pass"))))
     assert data["verdict"]["label"] == "Safe" and data["verdict"]["score"] == 15
     assert data["verdict"]["findings"][0]["rule"] == "spf_fail"
+
+
+def _phish(write_eml, **kw):
+    base = dict(from_="PayPal <s@paypa1.com>", auth="mx; spf=fail; dkim=fail; dmarc=fail",
+                subject="Account suspended", text="URGENT verify your account immediately",
+                html='<a href="http://evil.com/x">https://www.paypal.com/login</a>',
+                received=["from mail.evil.ru (mail.evil.ru [8.8.8.8]) by mx.google.com; Mon, 1 Jan 2024 10:00:00 +0000"],
+                attachments=[("invoice.pdf.exe", b"MZ")])
+    base.update(kw)
+    return analyze(write_eml(**base))
+
+
+def test_report_has_no_javascript_and_key_sections(write_eml):
+    html = render_html(_phish(write_eml))
+    assert "<script" not in html.lower()
+    for section in ("Verdict", "Why this verdict", "Email authentication", "Mail route",
+                    "Attachments", "Indicators of compromise", "MITRE ATT&amp;CK", "Recommended actions"):
+        assert section in html, section
+
+
+def test_report_shows_route_attachment_and_link_finding(write_eml):
+    a = _phish(write_eml)
+    html = render_html(a)
+    assert "mail[.]evil[.]ru" in html or "mail.evil.ru" in html
+    assert "8[.]8[.]8[.]8" in html
+    assert "invoice.pdf.exe" in html and a.email.attachments[0].sha256 in html
+    assert "Link text shows" in html and "www[.]paypal[.]com" in html
+    assert a.email_sha256 in html
+
+
+def test_safe_report_renders_without_optional_data(write_eml):
+    html = render_html(analyze(write_eml(auth="mx; spf=pass; dkim=pass; dmarc=pass")))
+    assert "Safe" in html and "No risk indicators" in html

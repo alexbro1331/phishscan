@@ -1,49 +1,296 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>PhishScan report</title>
-<style>
-body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
-.banner{padding:1.2rem;border-radius:8px;color:#fff;font-size:1.4rem;font-weight:700}
-.Safe{background:#2e7d32}.Suspicious{background:#ef6c00}.Malicious{background:#c62828}
-table{border-collapse:collapse;width:100%;margin:.5rem 0 1.5rem}th,td{border:1px solid #ddd;padding:.4rem .6rem;text-align:left;font-size:.9rem}
-th{background:#f5f5f5}code{word-break:break-all}.note{background:#fff8e1;padding:.6rem;border-left:4px solid #f9a825;margin:.4rem 0}
-</style></head><body>
-<h1>PhishScan report</h1>
-<div class="banner Malicious">Malicious &mdash; risk score 100/100</div>
-<p><b>Subject:</b> Your account is suspended<br><b>From:</b> PayPal Support &lt;support@paypa1.com&gt;</p>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>PhishScan &middot; Malicious &middot; Your account is suspended</title>
+<style>:root{--bg:#f3f5fa;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e3e8f1;--brand:#4f46e5;--brand-2:#7c3aed;
+--ok:#15803d;--ok-bg:#dcfce7;--warn:#b45309;--warn-bg:#fef3c7;--bad:#b91c1c;--bad-bg:#fee2e2;--info:#4338ca;--info-bg:#eef2ff;
+--code-bg:#f1f5f9;--shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px rgba(15,23,42,.07);--radius:14px}
+@media (prefers-color-scheme:dark){:root{--bg:#0a1020;--card:#111a2f;--ink:#e7edf8;--muted:#94a3bd;--line:#22304b;--brand:#8b93ff;--brand-2:#a78bfa;
+--ok:#4ade80;--ok-bg:#12321f;--warn:#fbbf24;--warn-bg:#38290b;--bad:#fb7185;--bad-bg:#3b141b;--info:#a5b4fc;--info-bg:#1b2244;--code-bg:#0b1326;--shadow:none}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--brand)}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,Menlo,monospace;font-size:.86em}
+code{background:var(--code-bg);padding:.1em .4em;border-radius:6px;word-break:break-all}
+.topbar{background:linear-gradient(120deg,#1e1b4b,#3730a3 55%,#6d28d9);color:#fff}
+.topbar .in{max-width:1080px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem;letter-spacing:.2px;color:#fff;text-decoration:none}
+.brand svg{width:28px;height:28px}
+.tag{margin-left:auto;font-size:.8rem;opacity:.85}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin:0 0 18px}
+.card>h2{margin:0 0 14px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.card>h2 .n{font-size:.75rem;font-weight:600;color:var(--muted);background:var(--code-bg);border-radius:999px;padding:1px 9px}
+.muted{color:var(--muted)}
+.hero{display:grid;grid-template-columns:200px 1fr;gap:26px;align-items:center;border-top:6px solid var(--vc)}
+.v-Safe{--vc:var(--ok);--vbg:var(--ok-bg)}.v-Suspicious{--vc:var(--warn);--vbg:var(--warn-bg)}.v-Malicious{--vc:var(--bad);--vbg:var(--bad-bg)}
+.gauge{width:180px;height:180px;margin:auto}
+.gauge .track{stroke:var(--line)}.gauge .bar{stroke:var(--vc);stroke-linecap:round;transition:none}
+.gauge text{fill:var(--ink);text-anchor:middle}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-weight:700;font-size:.85rem;letter-spacing:.6px;text-transform:uppercase;color:var(--vc);background:var(--vbg)}
+.hero h1{margin:8px 0 6px;font-size:1.55rem;line-height:1.25}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:14px 0 0;font-size:.9rem}
+.facts dt{color:var(--muted)}.facts dd{margin:0;word-break:break-word}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tile .k{font-size:.75rem;color:var(--muted);letter-spacing:.8px;text-transform:uppercase}
+.tile .v{font-size:1.3rem;font-weight:700;margin-top:2px}
+.tile.ok{background:var(--ok-bg)}.tile.ok .v{color:var(--ok)}
+.tile.bad{background:var(--bad-bg)}.tile.bad .v{color:var(--bad)}
+.tile.warn{background:var(--warn-bg)}.tile.warn .v{color:var(--warn)}
+.finding{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:10px;padding:12px 14px;margin:0 0 10px}
+.finding.high{border-left-color:var(--bad)}.finding.medium{border-left-color:var(--warn)}.finding.low{border-left-color:var(--info)}
+.finding .pts{min-width:52px;text-align:center;font-weight:800;font-size:1.05rem;border-radius:8px;padding:4px 0}
+.finding.high .pts{background:var(--bad-bg);color:var(--bad)}.finding.medium .pts{background:var(--warn-bg);color:var(--warn)}.finding.low .pts{background:var(--info-bg);color:var(--info)}
+.finding .txt{flex:1;min-width:0}.finding .rule{font-size:.72rem;color:var(--muted);letter-spacing:.7px;text-transform:uppercase}
+.finding .msg{word-break:break-word}
+.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 9px;border-radius:999px;background:var(--info-bg);color:var(--info);margin:2px 4px 2px 0;white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.bad{background:var(--bad-bg);color:var(--bad)}.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.table-scroll{overflow-x:auto}
+table.data{border-collapse:collapse;width:100%;font-size:.88rem}
+table.data th{text-align:left;font-size:.72rem;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line);padding:8px 10px;white-space:nowrap}
+table.data td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;word-break:break-word}
+table.data tr:last-child td{border-bottom:0}
+.route{list-style:none;margin:0;padding:0}
+.route li{position:relative;padding:0 0 16px 30px;margin:0}
+.route li:before{content:"";position:absolute;left:8px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--brand)}
+.route li:after{content:"";position:absolute;left:12px;top:18px;bottom:-2px;width:2px;background:var(--line)}
+.route li:last-child{padding-bottom:0}.route li:last-child:after{display:none}
+.route .h{font-weight:600}.route .m{font-size:.84rem;color:var(--muted)}
+ul.actions{list-style:none;margin:0;padding:0}
+ul.actions li{padding:10px 12px 10px 38px;position:relative;border:1px solid var(--line);border-radius:10px;margin:0 0 8px}
+ul.actions li:before{content:"";position:absolute;left:12px;top:13px;width:16px;height:16px;border:2px solid var(--vc);border-radius:5px}
+.note{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 14px;margin:0 0 10px;font-size:.9rem}
+.empty{color:var(--muted);font-style:italic}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:10px}
+.foot{color:var(--muted);font-size:.8rem;text-align:center;margin-top:26px;line-height:1.7}
+.btn{display:inline-block;background:linear-gradient(120deg,#4f46e5,#7c3aed);color:#fff;border:0;border-radius:10px;padding:12px 22px;font:600 1rem inherit;cursor:pointer;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.upload{border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;background:var(--card)}
+.upload input[type=file]{display:block;margin:14px auto;max-width:100%}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.features .card{margin:0}
+.lead{font-size:1.05rem;color:var(--muted);max-width:720px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:760px){.hero,.tiles,.features,.grid-2{grid-template-columns:1fr}.gauge{width:150px;height:150px}.tag{display:none}}
+@media print{body{background:#fff}.topbar{background:#312e81!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.card{box-shadow:none;break-inside:avoid}details{display:block}details>*{display:block}}</style>
+</head><body>
+<header class="topbar"><div class="in">
+<a class="brand" href="#">
+<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 4 7v8c0 7.2 5 12.9 12 15 7-2.100 12-7.800 12-15V7L16 2Z" fill="#fff" fill-opacity=".18" stroke="#fff" stroke-width="2"/><path d="m10.500 16 4 4 7.500-8" stroke="#fff" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"/></svg>
+PhishScan</a>
+<span class="tag">Phishing email triage &middot; v1.0.0</span>
+</div></header>
+<main class="wrap">
 
-<h2>Why this verdict</h2>
-<table><tr><th>Finding</th><th>Points</th><th>MITRE</th></tr>
-<tr><td>DMARC result: fail</td><td>+25</td><td>T1672</td></tr>
-<tr><td>Attachment &#39;invoice.pdf.exe&#39; has a risky file type (.exe)</td><td>+25</td><td>T1566.001</td></tr>
-<tr><td>Sender domain &#39;paypa1.com&#39; imitates the brand &#39;paypal&#39;</td><td>+25</td><td>T1656</td></tr>
-<tr><td>SPF result: fail</td><td>+15</td><td>T1672</td></tr>
-<tr><td>DKIM result: fail</td><td>+15</td><td>T1672</td></tr>
-<tr><td>Reply-To domain (evil-mail.ru) differs from From domain (paypa1.com)</td><td>+15</td><td>T1656</td></tr>
-<tr><td>URL shortener used (bit.ly) hides the real destination</td><td>+10</td><td>T1566.002</td></tr>
-<tr><td>Multiple urgency/pressure phrases in subject or body</td><td>+10</td><td></td></tr>
-</table>
+<section class="card hero v-Malicious" aria-label="Verdict">
+  <svg class="gauge" viewBox="0 0 140 140" role="img" aria-label="Risk score 100 out of 100">
+    <circle class="track" cx="70" cy="70" r="58" fill="none" stroke-width="12"/>
+    <circle class="bar" cx="70" cy="70" r="58" fill="none" stroke-width="12"
+      stroke-dasharray="364.4 364.4" transform="rotate(-90 70 70)"/>
+    <text x="70" y="76" font-size="34" font-weight="800">100</text>
+    <text x="70" y="96" font-size="11" class="muted" style="fill:var(--muted)">/ 100 risk</text>
+  </svg>
+  <div>
+    <span class="pill">Verdict: Malicious</span>
+    <h1>This message is very likely phishing or spoofing</h1>
+    <div class="muted">Multiple strong indicators were detected. Do not interact with it and escalate to your security team.</div>
+    <dl class="facts">
+      <dt>Subject</dt><dd>Your account is suspended</dd>
+      <dt>From</dt><dd>PayPal Support &lt;support@paypa1.com&gt;</dd>
+      <dt>To</dt><dd>bob@example.org</dd>
+      
+      
+    </dl>
+  </div>
+</section>
 
-<h2>Email authentication</h2>
-<table><tr><th>Mechanism</th><th>Result</th></tr>
-<tr><td>SPF</td><td>fail</td></tr>
-<tr><td>DKIM</td><td>fail</td></tr>
-<tr><td>DMARC</td><td>fail</td></tr>
-</table>
-
-<h2>Indicators of compromise (defanged)</h2>
-<table><tr><th>Type</th><th>Value</th></tr>
-<tr><td>URL</td><td><code>hxxp://bit[.]ly/3xYz</code></td></tr>
-
-<tr><td>SHA256</td><td>invoice.pdf.exe<br><code>71a3ed4dada577a57e0ac581d0335b18b04497385cb981e78a203a0215b889cf</code></td></tr></table>
-
-<h2>Reputation lookups</h2>
-<table><tr><th>Source</th><th>Indicator</th><th>Result</th></tr>
-<tr><td colspan="3">No lookups performed.</td></tr></table>
 <div class="note">Enrichment skipped (offline mode or no API keys); verdict uses header and content analysis only.</div>
 
-<h2>MITRE ATT&amp;CK</h2>
-<ul><li>T1672 &mdash; Email Spoofing</li><li>T1566.001 &mdash; Phishing: Spearphishing Attachment</li><li>T1656 &mdash; Impersonation</li><li>T1566.002 &mdash; Phishing: Spearphishing Link</li></ul>
+<section class="card">
+  <h2>Why this verdict <span class="n">9 findings</span></h2>
+  
+  <div class="finding high">
+    <div class="pts">+25</div>
+    <div class="txt">
+      <div class="rule">dmarc fail</div>
+      <div class="msg">DMARC result: fail</div>
+      <span class="chip">T1672 &middot; Email Spoofing</span>
+    </div>
+  </div>
+  
+  <div class="finding high">
+    <div class="pts">+25</div>
+    <div class="txt">
+      <div class="rule">dangerous extension</div>
+      <div class="msg">Attachment &#39;invoice.pdf.exe&#39; has a risky file type (.exe)</div>
+      <span class="chip">T1566.001 &middot; Phishing: Spearphishing Attachment</span>
+    </div>
+  </div>
+  
+  <div class="finding high">
+    <div class="pts">+25</div>
+    <div class="txt">
+      <div class="rule">link text mismatch</div>
+      <div class="msg">Link text shows www[.]paypal[.]com but points to secure-paypa1-login[.]ru</div>
+      <span class="chip">T1566.002 &middot; Phishing: Spearphishing Link</span>
+    </div>
+  </div>
+  
+  <div class="finding high">
+    <div class="pts">+25</div>
+    <div class="txt">
+      <div class="rule">lookalike domain</div>
+      <div class="msg">Sender domain &#39;paypa1.com&#39; imitates the brand &#39;paypal&#39;</div>
+      <span class="chip">T1656 &middot; Impersonation</span>
+    </div>
+  </div>
+  
+  <div class="finding medium">
+    <div class="pts">+15</div>
+    <div class="txt">
+      <div class="rule">spf fail</div>
+      <div class="msg">SPF result: fail</div>
+      <span class="chip">T1672 &middot; Email Spoofing</span>
+    </div>
+  </div>
+  
+  <div class="finding medium">
+    <div class="pts">+15</div>
+    <div class="txt">
+      <div class="rule">dkim fail</div>
+      <div class="msg">DKIM result: fail</div>
+      <span class="chip">T1672 &middot; Email Spoofing</span>
+    </div>
+  </div>
+  
+  <div class="finding medium">
+    <div class="pts">+15</div>
+    <div class="txt">
+      <div class="rule">reply to mismatch</div>
+      <div class="msg">Reply-To domain (evil-mail.ru) differs from From domain (paypa1.com)</div>
+      <span class="chip">T1656 &middot; Impersonation</span>
+    </div>
+  </div>
+  
+  <div class="finding low">
+    <div class="pts">+10</div>
+    <div class="txt">
+      <div class="rule">url shortener</div>
+      <div class="msg">URL shortener used (bit.ly) hides the real destination</div>
+      <span class="chip">T1566.002 &middot; Phishing: Spearphishing Link</span>
+    </div>
+  </div>
+  
+  <div class="finding low">
+    <div class="pts">+10</div>
+    <div class="txt">
+      <div class="rule">urgency language</div>
+      <div class="msg">Multiple urgency/pressure phrases in subject or body</div>
+      
+    </div>
+  </div>
+  
+</section>
 
-<h2>Recommended actions</h2>
-<ul><li>Do NOT click links or open attachments.</li><li>Quarantine/delete the message for all recipients.</li><li>Block the sender domain and listed IOCs at the mail gateway and proxy.</li><li>If anyone interacted with it, reset credentials and start incident response.</li></ul>
+<section class="card">
+  <h2>Email authentication</h2>
+  <div class="tiles">
+    <div class="tile bad"><div class="k">SPF</div><div class="v">FAIL</div></div><div class="tile bad"><div class="k">DKIM</div><div class="v">FAIL</div></div><div class="tile bad"><div class="k">DMARC</div><div class="v">FAIL</div></div>
+  </div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Results are read from the receiving mail server's headers (not re-verified). A missing result means the server did not record one.</p>
+</section>
+
+<section class="card">
+  <h2>Mail route <span class="n">2 hops</span></h2>
+  
+  <ol class="route">
+    <li>
+      <div class="h">mx[.]google[.]com</div>
+      <div class="m">received from mail[.]evil-mail[.]ru &middot; <code>203[.]0[.]113[.]50</code> &middot; Mon, 15 Jan 2024 09:12:44 +0000</div>
+    </li><li>
+      <div class="h">inbox[.]example[.]org</div>
+      <div class="m">received from mx[.]google[.]com &middot; <code>8[.]8[.]8[.]8</code> &middot; Mon, 15 Jan 2024 09:12:46 +0000</div>
+    </li>
+  </ol>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Listed from the first hop (closest to the sender) to the last. Hops added by the sender can be forged; trust the ones added by your own provider.</p>
+  
+</section>
+
+<section class="card">
+  <h2>Attachments <span class="n">1</span></h2>
+  
+  <div class="table-scroll"><table class="data">
+    <tr><th>File</th><th>Type</th><th>Size</th><th>SHA-256</th><th>Status</th></tr>
+    <tr>
+      <td>invoice.pdf.exe</td><td>application/octet-stream</td><td>15 B</td><td><code>71a3ed4dada577a57e0ac581d0335b18b04497385cb981e78a203a0215b889cf</code></td>
+      <td><span class="chip bad">risky type .exe</span></td>
+    </tr>
+  </table></div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Attachments are hashed only &mdash; never opened or executed.</p>
+  
+</section>
+
+<section class="card">
+  <h2>Indicators of compromise <span class="n">7</span></h2>
+  
+  <div class="table-scroll"><table class="data">
+    <tr><th>Type</th><th>Indicator (defanged)</th><th>Reputation</th></tr>
+    <tr>
+      <td>URL</td><td><code>hxxp://bit[.]ly/3xYz</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>URL</td><td><code>hxxp://secure-paypa1-login[.]ru/verify</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>URL</td><td><code>hxxps://www[.]paypal[.]com/verify</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>Domain</td><td><code>bit[.]ly</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>Domain</td><td><code>secure-paypa1-login[.]ru</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>Domain</td><td><code>www[.]paypal[.]com</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr><tr>
+      <td>IP</td><td><code>8[.]8[.]8[.]8</code></td>
+      <td><span class="muted">not checked</span></td>
+    </tr>
+  </table></div>
+  <p class="muted" style="margin:12px 0 0;font-size:.85rem">Indicators are defanged so they cannot be clicked by accident. Re-fang only inside an isolated analysis environment.</p>
+  
+</section>
+
+<div class="grid-2">
+<section class="card">
+  <h2>MITRE ATT&amp;CK</h2>
+  <p style="margin:0 0 8px"><span class="chip">T1672</span> Email Spoofing</p><p style="margin:0 0 8px"><span class="chip">T1566.001</span> Phishing: Spearphishing Attachment</p><p style="margin:0 0 8px"><span class="chip">T1566.002</span> Phishing: Spearphishing Link</p><p style="margin:0 0 8px"><span class="chip">T1656</span> Impersonation</p>
+</section>
+<section class="card v-Malicious">
+  <h2>Recommended actions</h2>
+  <ul class="actions"><li>Do NOT click links or open attachments.</li><li>Quarantine or delete the message for all recipients.</li><li>Block the sender domain and the listed indicators at the mail gateway and proxy.</li><li>If anyone interacted with it, reset their credentials and start incident response.</li></ul>
+</section>
+</div>
+
+<section class="card">
+  <h2>Message headers <span class="n">9</span></h2>
+  <details><summary>Show all headers</summary>
+    <div class="table-scroll"><table class="data">
+      <tr><td style="white-space:nowrap"><b>From</b></td><td class="mono">PayPal Support &lt;support@paypa1.com&gt;</td></tr><tr><td style="white-space:nowrap"><b>To</b></td><td class="mono">bob@example.org</td></tr><tr><td style="white-space:nowrap"><b>Subject</b></td><td class="mono">Your account is suspended</td></tr><tr><td style="white-space:nowrap"><b>Reply-To</b></td><td class="mono">pay@evil-mail.ru</td></tr><tr><td style="white-space:nowrap"><b>Authentication-Results</b></td><td class="mono">mx; spf=fail; dkim=fail; dmarc=fail</td></tr><tr><td style="white-space:nowrap"><b>Received</b></td><td class="mono">from mx.google.com (mx.google.com [8.8.8.8]) by inbox.example.org with ESMTPS; Mon, 15 Jan 2024 09:12:46 +0000</td></tr><tr><td style="white-space:nowrap"><b>Received</b></td><td class="mono">from mail.evil-mail.ru (mail.evil-mail.ru [203.0.113.50]) by mx.google.com with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000</td></tr><tr><td style="white-space:nowrap"><b>MIME-Version</b></td><td class="mono">1.0</td></tr><tr><td style="white-space:nowrap"><b>Content-Type</b></td><td class="mono">multipart/mixed; boundary=&#34;===============4399838721788787628==&#34;</td></tr>
+    </table></div>
+  </details>
+</section>
+
+<p class="foot">Generated by PhishScan v1.0.0 on 2026-09-29T15:46:24Z<br>
+Message SHA-256: <span class="mono">ff21101552851902fa4f8bfc43fd4fbaa59ebf1272ea04c5a82c30b2d1e73121</span><br>
+Automated triage aid &mdash; a human analyst should confirm the verdict before taking action.</p>
+
+</main>
 </body></html>

@@ -47,3 +47,18 @@ def test_first_auth_results_header_wins():
     e = ParsedEmail(from_addr="a@x.com",
                     auth_results="mx1; spf=pass; dkim=pass; dmarc=pass mx2; spf=fail")
     assert analyze_auth(e)[0]["spf"] == "pass"
+
+
+def test_subdomain_of_same_organization_is_aligned_not_a_mismatch():
+    e = ParsedEmail(from_addr="news@acme-corp.com", reply_to="support@acme-corp.com",
+                    return_path="bounce@mail.acme-corp.com", auth_results="spf=pass; dkim=pass; dmarc=pass")
+    assert analyze_auth(e)[1] == []
+    e2 = ParsedEmail(from_addr="news@mail.acme-corp.com", return_path="bounce@acme-corp.com",
+                     auth_results="spf=pass; dkim=pass; dmarc=pass")
+    assert analyze_auth(e2)[1] == []
+
+
+def test_lookalike_suffix_is_not_aligned():
+    e = ParsedEmail(from_addr="news@acme-corp.com", reply_to="x@evilacme-corp.com",
+                    auth_results="spf=pass; dkim=pass; dmarc=pass")
+    assert rules(analyze_auth(e)[1]) == {"reply_to_mismatch"}

@@ -3,16 +3,35 @@ To: bob@example.org
 Subject: Your account is suspended
 Reply-To: pay@evil-mail.ru
 Authentication-Results: mx; spf=fail; dkim=fail; dmarc=fail
+Received: from mx.google.com (mx.google.com [8.8.8.8]) by inbox.example.org
+ with ESMTPS; Mon, 15 Jan 2024 09:12:46 +0000
+Received: from mail.evil-mail.ru (mail.evil-mail.ru [203.0.113.50]) by
+ mx.google.com with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2044149260129755868=="
+Content-Type: multipart/mixed; boundary="===============4399838721788787628=="
 
---===============2044149260129755868==
+--===============4399838721788787628==
+Content-Type: multipart/alternative;
+ boundary="===============6854475152805676931=="
+
+--===============6854475152805676931==
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
 URGENT: verify your account immediately: http://bit.ly/3xYz
 
---===============2044149260129755868==
+--===============6854475152805676931==
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+<p>Dear customer, your account is <b>suspended</b>. Verify within 24 hours:</=
+p><p><a href=3D"http://secure-paypa1-login.ru/verify">https://www.paypal.com/=
+verify</a></p>
+
+--===============6854475152805676931==--
+
+--===============4399838721788787628==
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="invoice.pdf.exe"
@@ -20,4 +39,4 @@ MIME-Version: 1.0
 
 TVogZmFrZSBwYXlsb2Fk
 
---===============2044149260129755868==--
+--===============4399838721788787628==--

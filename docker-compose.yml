@@ -1,0 +1,26 @@
+services:
+  phishscan:
+    build: .
+    image: phishscan:1.0.0
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env        # optional: VT_API_KEY, ABUSEIPDB_API_KEY, URLSCAN_API_KEY
+        required: false
+    environment:
+      MAX_UPLOAD_MB: "10"
+      PHISHSCAN_RATE_LIMIT: "30"        # POSTs per minute per client IP
+      # PHISHSCAN_TRUST_PROXY: "1"      # set when running behind a reverse proxy / load balancer
+    volumes:
+      - phishscan-data:/data
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  phishscan-data:

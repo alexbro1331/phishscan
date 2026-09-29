@@ -13,6 +13,12 @@ def domain_of(addr: str) -> str:
     return addr.rsplit("@", 1)[1].lower() if "@" in addr else ""
 
 
+def aligned(a: str, b: str) -> bool:
+    """Same domain, or one is a subdomain of the other (mail.example.com vs example.com)."""
+    a, b = a.lower(), b.lower()
+    return a == b or a.endswith("." + b) or b.endswith("." + a)
+
+
 def analyze_auth(email: ParsedEmail):
     results: dict[str, str] = {}
     for mech, res in _RES.findall(email.auth_results or ""):
@@ -29,10 +35,10 @@ def analyze_auth(email: ParsedEmail):
         if results.get(mech) in _BAD:
             findings.append(finding(f"{mech}_fail", f"{mech.upper()} result: {results[mech]}"))
     sender = domain_of(email.from_addr)
-    if email.reply_to and sender and domain_of(email.reply_to) != sender:
+    if email.reply_to and sender and not aligned(domain_of(email.reply_to), sender):
         findings.append(finding("reply_to_mismatch",
                                 f"Reply-To domain ({domain_of(email.reply_to)}) differs from From domain ({sender})"))
-    if email.return_path and sender and domain_of(email.return_path) != sender:
+    if email.return_path and sender and not aligned(domain_of(email.return_path), sender):
         findings.append(finding("return_path_mismatch",
                                 f"Return-Path domain ({domain_of(email.return_path)}) differs from From domain ({sender})"))
     m = _EMAIL_IN_TEXT.search(email.from_display or "")
