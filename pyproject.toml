@@ -34,7 +34,7 @@ phishscan = "phishscan.cli:main"
 include = ["phishscan*"]
 
 [tool.setuptools.package-data]
-phishscan = ["templates/*"]
+phishscan = ["templates/*", "static/*", "samples/*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

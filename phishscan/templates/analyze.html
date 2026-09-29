@@ -1,0 +1,38 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Analyze{% endblock %}
+{% block content %}
+<div class="stack" style="max-width:860px">
+  {% set big = true %}
+  {% include "_dropzone.html" %}
+
+  <section class="panel rise" style="--i:1">
+    <div class="panel-h"><h2>Or paste the raw message</h2></div>
+    <form class="panel-b" method="post" action="{{ url_for('analyze_upload') }}" data-scan>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <textarea name="raw" rows="9" spellcheck="false" placeholder="Paste the full message source here, starting with the headers (From:, To:, Received: ...)"></textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:12px"><button class="btn primary" type="submit">{{ icon('upload') }}Analyze pasted message</button><span class="muted" style="font-size:12.5px">Gmail: ⋮ menu, then "Show original". Outlook: File, Properties, "Internet headers" (headers only gives a partial result).</span></div>
+    </form>
+  </section>
+
+  <div class="grid g-1-1">
+    <section class="panel rise" style="--i:2">
+      <div class="panel-h"><h2>Try a sample</h2></div>
+      <div class="panel-b" style="display:grid;gap:12px">
+        {% for key, s in samples.items() %}
+        <form method="post" action="{{ url_for('analyze_sample', name=key) }}" data-scan style="display:flex;gap:12px;align-items:center"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div style="flex:1"><b>{{ s[0] }}</b><div class="muted" style="font-size:12.5px">{{ s[1] }}</div></div><button class="btn sm" type="submit">Analyze</button></form>
+        {% endfor %}
+      </div>
+    </section>
+    <section class="panel rise" style="--i:3">
+      <div class="panel-h"><h2>How to export an .eml</h2></div>
+      <div class="panel-b" style="display:grid;gap:10px;font-size:13px">
+        <div><b>Gmail</b><div class="muted">Open the message, ⋮ menu, "Download message".</div></div>
+        <div><b>Outlook</b><div class="muted">Drag the message to your desktop, or File, Save As, .eml. Inside a company, "Forward as attachment" keeps the headers intact.</div></div>
+        <div><b>Thunderbird / Apple Mail</b><div class="muted">File, Save As, choose .eml (Apple Mail: drag to the desktop).</div></div>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

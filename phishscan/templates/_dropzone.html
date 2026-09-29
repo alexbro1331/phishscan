@@ -1,0 +1,12 @@
+{% from "_macros.html" import icon %}
+<div class="drop {{ 'big' if big }} rise" data-dropzone>
+  <div class="ic">{{ icon('mail') }}</div>
+  <div>
+    <b>Drop an .eml file here to analyze it</b>
+    <span class="h">Files up to {{ max_mb }} MB. The message body is never stored{% if lookups %}; indicators (not email text) are sent to your configured lookup services{% else %}; nothing leaves this server{% endif %}.</span>
+  </div>
+  <div class="act">
+    <label class="btn primary" style="cursor:pointer"><input type="file" data-file accept=".eml,message/rfc822" hidden>{{ icon('upload') }}Choose file</label>
+    {% if not big %}<a class="btn" href="{{ url_for('analyze_page') }}">Paste raw message</a>{% endif %}
+  </div>
+</div>

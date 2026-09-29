@@ -1,0 +1,51 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="stack" style="max-width:980px">
+  <div class="grid g-1-1">
+    <section class="panel rise">
+      <div class="panel-h"><h2>Reputation lookups</h2></div>
+      <div class="panel-b" style="display:grid;gap:10px">
+        {% for p in providers %}<div style="display:flex;align-items:center;gap:10px"><span class="dot {{ 'on' if p.on }}"></span><b>{{ p.name }}</b><span class="muted" style="font-size:12.5px">{{ p.env }}</span><span class="chip {{ 'ok' if p.on else 'mute' }}" style="margin-left:auto">{{ 'configured' if p.on else 'not set' }}</span></div>{% endfor %}
+        <p class="hint" style="margin:4px 0 0">Keys are read from environment variables and never shown. With none set, analysis runs fully offline and no indicator leaves this server. When set, only indicators (URLs, domains, IPs, file hashes) are sent, never email text.</p>
+      </div>
+    </section>
+    <section class="panel rise" style="--i:1">
+      <div class="panel-h"><h2>Server</h2></div>
+      <div class="panel-b"><dl class="kv">
+        <dt>Version</dt><dd>PhishScan {{ version }}</dd>
+        <dt>Storage</dt><dd>{{ storage }}</dd>
+        <dt>Access</dt><dd>{{ 'Password protected' if auth_enabled else 'Open (no password set)' }}</dd>
+        <dt>API token</dt><dd>{{ 'set' if api_token else 'not set' }}</dd>
+        <dt>Upload limit</dt><dd>{{ max_mb }} MB</dd>
+        <dt>Rate limit</dt><dd>{{ rate_limit }} requests / minute / client</dd>
+        <dt>Retention</dt><dd>{{ (retention ~ ' days') if retention else 'keep until deleted' }}</dd>
+      </dl></div>
+    </section>
+  </div>
+
+  <section class="panel rise" style="--i:2">
+    <div class="panel-h"><h2>Scoring rules</h2><span class="c">{{ rules | length }}</span></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Rule</th><th>Id</th><th class="num">Points</th><th>MITRE</th></tr></thead>
+      <tbody>{% for r in rules %}<tr><td><b>{{ r.title }}</b></td><td><code>{{ r.id }}</code></td><td class="num">{{ r.points }}</td><td>{% if r.mitre %}<span class="chip">{{ r.mitre }}</span>{% endif %}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <div class="panel-b"><p class="hint" style="margin:0">Each rule counts once and the score is capped at 100. <b>0-29 Safe · 30-59 Suspicious · 60+ Malicious.</b> Weights live in <code>phishscan/weights.py</code>.</p></div>
+  </section>
+
+  <section class="panel rise" style="--i:3;border-color:color-mix(in srgb,var(--red) 35%,var(--line))">
+    <div class="panel-h"><h2 style="color:var(--red)">Danger zone</h2></div>
+    <div class="panel-b" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px"><b>Delete all cases</b><div class="muted" style="font-size:12.5px">Removes every analysis, note and indicator from this server.</div></div>
+      <button class="btn danger" type="button" data-open-dialog="purge">{{ icon('trash') }}Delete everything</button>
+    </div>
+  </section>
+</div>
+<dialog id="purge">
+  <h3>Delete all cases?</h3>
+  <p class="muted">{{ stats_total }} case{{ "" if stats_total == 1 else "s" }} and all their notes and indicators will be removed. This cannot be undone.</p>
+  <form method="post" action="{{ url_for('purge') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row"><button class="btn" type="button" data-close-dialog>Cancel</button><button class="btn danger" type="submit">Delete everything</button></div></form>
+</dialog>
+{% endblock %}

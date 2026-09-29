@@ -1,0 +1,24 @@
+{% extends "layout_standalone.html" %}
+{% block title %}PhishScan · Batch summary{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="kpis">
+    <div class="kpi v-Malicious rise"><div class="l">Malicious</div><div class="v">{{ counts.Malicious }}</div></div>
+    <div class="kpi v-Suspicious rise" style="--i:1"><div class="l">Suspicious</div><div class="v">{{ counts.Suspicious }}</div></div>
+    <div class="kpi v-Safe rise" style="--i:2"><div class="l">Safe</div><div class="v">{{ counts.Safe }}</div></div>
+    <div class="kpi rise" style="--i:3"><div class="l">Unreadable</div><div class="v">{{ counts.Error }}</div></div>
+  </div>
+  <section class="panel rise" style="--i:4">
+    <div class="panel-h"><h2>{{ total }} email{{ "" if total == 1 else "s" }}, highest risk first</h2></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>File</th><th>Verdict</th><th class="num">Score</th><th>From</th><th>Subject</th><th></th></tr></thead>
+      <tbody>{% for r in rows %}<tr>
+        <td><b>{{ r.file }}</b></td>
+        <td>{% if r.verdict == "Error" %}<span class="pill">Unreadable</span>{% else %}<span class="badge v-{{ r.verdict }}">{{ r.verdict }}</span>{% endif %}</td>
+        <td class="num">{{ r.score }}</td><td class="trunc">{{ r.from }}</td><td class="trunc">{{ r.subject or r.findings }}</td>
+        <td>{% if r.report %}<a href="{{ r.report }}">Open report</a>{% endif %}</td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+</div>
+{% endblock %}

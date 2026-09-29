@@ -57,9 +57,9 @@ def test_cli_empty_folder(tmp_path, capsys):
 def test_cli_serve_dispatch(monkeypatch):
     import phishscan.web as web
     seen = {}
-    monkeypatch.setattr(web, "serve", lambda host, port, threads=4: seen.update(host=host, port=port, threads=threads))
+    monkeypatch.setattr(web, "serve", lambda host, port, threads=4, demo=False: seen.update(host=host, port=port, threads=threads, demo=demo))
     assert main(["serve", "--host", "0.0.0.0", "--port", "9001"]) == 0
-    assert seen == {"host": "0.0.0.0", "port": 9001, "threads": 4}
+    assert seen == {"host": "0.0.0.0", "port": 9001, "threads": 4, "demo": False}
 
 
 def test_cli_version(capsys):
@@ -68,3 +68,11 @@ def test_cli_version(capsys):
     with pytest.raises(SystemExit) as e:
         main(["--version"])
     assert e.value.code == 0 and phishscan.__version__ in capsys.readouterr().out
+
+
+def test_cli_serve_demo_and_threads_are_passed_through(monkeypatch):
+    import phishscan.web as web
+    seen = {}
+    monkeypatch.setattr(web, "serve", lambda host, port, threads=4, demo=False: seen.update(threads=threads, demo=demo))
+    assert main(["serve", "--demo", "--threads", "8"]) == 0
+    assert seen == {"threads": 8, "demo": True}

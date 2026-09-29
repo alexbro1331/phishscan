@@ -81,7 +81,7 @@ def _batch(folder: Path, args, clients) -> int:
         w.writeheader()
         w.writerows(rows)
     counts = {k: sum(1 for r in rows if r["verdict"] == k) for k in ("Malicious", "Suspicious", "Safe", "Error")}
-    (out / "index.html").write_text(render_page("batch.html.j2",
+    (out / "index.html").write_text(render_page("batch.html",
                                                     rows=sorted(rows, key=lambda r: -(r["score"] if r["score"] != "" else -1)), counts=counts, total=len(rows)),
                                     encoding="utf-8")
     print(f"Analyzed {len(rows)} emails: {counts['Malicious']} malicious, {counts['Suspicious']} suspicious, "
@@ -95,10 +95,10 @@ def _serve(argv) -> int:
     p.add_argument("--host", default=os.environ.get("PHISHSCAN_HOST", "127.0.0.1"))
     p.add_argument("--port", type=int, default=int(os.environ.get("PORT") or os.environ.get("PHISHSCAN_PORT") or 8000))
     p.add_argument("--threads", type=int, default=4)
+    p.add_argument("--demo", action="store_true", help="start with sample data in memory (nothing is saved)")
     args = p.parse_args(argv)
     from . import web
-    web.serve(host=args.host, port=args.port, threads=args.threads) if args.threads != 4 \
-        else web.serve(host=args.host, port=args.port)
+    web.serve(host=args.host, port=args.port, threads=args.threads, demo=args.demo)
     return 0
 
 

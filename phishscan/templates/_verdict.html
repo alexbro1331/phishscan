@@ -1,0 +1,20 @@
+<section class="hero v-{{ r.label }} rise" aria-label="Verdict">
+  <div class="score">
+    <div class="lab">Risk score</div>
+    <div class="big"><span data-count="{{ r.score }}">{{ r.score }}</span><small>/100</small></div>
+    <div class="meter" style="--s:{{ r.score }}" role="img" aria-label="Score {{ r.score }} of 100"><i></i></div>
+    <div class="meter-l"><span style="left:0">0</span><span style="left:30%">30</span><span style="left:60%">60</span><span style="left:100%">100</span></div>
+  </div>
+  <div>
+    <span class="badge {{ 'pulse' if r.label == 'Malicious' }}">{{ r.label }}</span>
+    <h1>{{ r.headline }}</h1>
+    <p class="why">{{ r.summary }}</p>
+    <dl class="facts">
+      <dt>Subject</dt><dd>{{ r.subject or "(none)" }}</dd>
+      <dt>From</dt><dd>{% if r.from_display %}{{ r.from_display }} {% endif %}&lt;{{ r.from_addr or "unknown" }}&gt;</dd>
+      {% if r.to_addr %}<dt>To</dt><dd>{{ r.to_addr }}</dd>{% endif %}
+      {% if r.date %}<dt>Sent</dt><dd>{{ r.date }}</dd>{% endif %}
+    </dl>
+  </div>
+</section>
+{% for n in r.notes %}<div class="note rise" style="--i:1">{{ n }}</div>{% endfor %}

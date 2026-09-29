@@ -1,0 +1,25 @@
+{% from "_macros.html" import logo %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · PhishScan</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+<main class="login">
+  <form class="panel rise" method="post" action="{{ url_for('login') }}">
+    <a class="brand" href="#">{{ logo() }}<span>PhishScan<small>Email triage console</small></span></a>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if error %}<div class="err-text" role="alert">{{ error }}</div>{% endif %}
+    <div class="field"><label for="pw">Password</label><input id="pw" type="password" name="password" autocomplete="current-password" autofocus required></div>
+    <button class="btn primary" type="submit" style="width:100%;justify-content:center">Sign in</button>
+    <p class="hint" style="text-align:center">Set by the server administrator (PHISHSCAN_PASSWORD).</p>
+  </form>
+</main>
+</body>
+</html>

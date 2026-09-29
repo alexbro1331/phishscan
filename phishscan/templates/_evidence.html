@@ -1,0 +1,84 @@
+{% from "_macros.html" import icon %}
+<section class="panel rise" style="--i:3">
+  <div class="panel-h"><h2>Why this verdict</h2><span class="c">{{ r.findings | length }} finding{{ "" if r.findings | length == 1 else "s" }}</span></div>
+  <div class="panel-b flush">
+    {% for f in r.findings %}
+    <div class="finding {{ f.sev }}">
+      <div class="pts">+{{ f.points }}</div>
+      <div>
+        <h3>{{ f.title }}</h3>
+        <p>{{ f.reason }}</p>
+        {% if f.mitre %}<span class="chip">{{ f.mitre }} · {{ f.mitre_name }}</span>{% endif %}
+      </div>
+    </div>
+    {% else %}<div class="empty"><h3>No risk indicators found</h3>Authentication and content checks came back clean.</div>{% endfor %}
+  </div>
+</section>
+
+<section class="panel rise" style="--i:4">
+  <div class="panel-h"><h2>Email authentication</h2></div>
+  <div class="panel-b">
+    <div class="auth3">
+      {% for t in r.auth %}<div class="auth-c {{ t.cls }}"><div class="k">{{ t.name }}</div><div class="v">{{ t.result }}</div></div>{% endfor %}
+    </div>
+    <p class="hint">Read from the receiving mail server's headers, not re-verified here. "Not present" means the server did not record a result.</p>
+  </div>
+</section>
+
+<section class="panel rise" style="--i:5">
+  <div class="panel-h"><h2>Mail route</h2><span class="c">{{ r.hops | length }} hop{{ "" if r.hops | length == 1 else "s" }}</span></div>
+  <div class="panel-b">
+    {% if r.hops %}
+    <ol class="route">
+      {% for h in r.hops %}<li><b>{{ h.by or "unknown server" }}</b>
+        <div class="m">{% if h.frm %}received from {{ h.frm }}{% endif %}{% if h.ip %} · <code>{{ h.ip }}</code>{% endif %}{% if h.time %} · {{ h.time }}{% endif %}</div></li>{% endfor %}
+    </ol>
+    <p class="hint">Oldest hop first. Hops added by the sender can be forged; trust the ones added by your own provider.</p>
+    {% else %}<p class="muted">No Received headers in this message.</p>{% endif %}
+  </div>
+</section>
+
+<section class="panel rise" style="--i:6">
+  <div class="panel-h"><h2>Attachments</h2><span class="c">{{ r.attachments | length }}</span></div>
+  {% if r.attachments %}
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>File</th><th>Type</th><th class="num">Size</th><th>SHA-256</th><th>Status</th></tr></thead>
+    <tbody>{% for a in r.attachments %}<tr>
+      <td><b>{{ a.filename }}</b></td><td class="muted">{{ a.content_type }}</td><td class="num">{{ a.size }}</td>
+      <td><code>{{ a.sha256 }}</code>{% if interactive %} <button class="copy" type="button" data-copy="{{ a.sha256 }}" title="Copy hash">{{ icon('copy') }}</button>{% endif %}</td>
+      <td>{% for c in a.chips %}<span class="chip {{ c.cls }}">{{ c.text }}</span>{% endfor %}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  <div class="panel-b"><p class="hint" style="margin:0">Attachments are hashed only, never opened or executed.</p></div>
+  {% else %}<div class="panel-b muted">No attachments.</div>{% endif %}
+</section>
+
+<section class="panel rise" style="--i:7">
+  <div class="panel-h"><h2>Indicators of compromise</h2><span class="c">{{ r.iocs | length }}</span></div>
+  {% if r.iocs %}
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Type</th><th>Indicator (defanged)</th><th>Reputation</th></tr></thead>
+    <tbody>{% for i in r.iocs %}<tr>
+      <td><span class="chip mute">{{ i.type }}</span></td>
+      <td><code>{{ i.value }}</code>{% if interactive %} <button class="copy" type="button" data-copy="{{ i.value }}" title="Copy defanged value">{{ icon('copy') }}</button>{% endif %}</td>
+      <td>{% for c in i.chips %}<span class="chip {{ c.cls }}">{{ c.text }}</span>{% else %}<span class="faint">not checked</span>{% endfor %}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  <div class="panel-b"><p class="hint" style="margin:0">Defanged so nothing can be clicked by accident. Re-fang only inside an isolated analysis environment.</p></div>
+  {% else %}<div class="panel-b muted">No URLs, domains or IP addresses found.</div>{% endif %}
+</section>
+
+<section class="panel rise" style="--i:8">
+  <div class="panel-h"><h2>MITRE ATT&amp;CK</h2></div>
+  <div class="panel-b">
+    {% for t in r.techniques %}<div style="margin-bottom:6px"><span class="chip">{{ t.id }}</span> {{ t.name }}</div>{% else %}<span class="muted">No techniques mapped.</span>{% endfor %}
+  </div>
+</section>
+
+<section class="panel rise" style="--i:9">
+  <details class="hdrs"><summary>Message headers ({{ r.headers | length }})</summary>
+    <div class="table-wrap"><table class="t"><tbody>
+      {% for k, v in r.headers %}<tr><td style="white-space:nowrap;vertical-align:top"><b>{{ k }}</b></td><td class="mono" style="word-break:break-all">{{ v }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </details>
+</section>

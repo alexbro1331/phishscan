@@ -1,0 +1,45 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon, badge, status_pill %}
+{% block title %}Cases{% endblock %}
+{% block content %}
+<div class="stack">
+  <form method="get" action="{{ url_for('cases') }}" class="rise" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div class="seg-tabs" role="tablist" aria-label="Verdict filter">
+      <a href="{{ url_with(verdict=None, page=None) }}" {% if not verdict %}aria-current="true"{% endif %}>All</a>
+      {% for v in ["Malicious", "Suspicious", "Safe"] %}<a href="{{ url_with(verdict=v, page=None) }}" {% if verdict == v %}aria-current="true"{% endif %}>{{ v }}</a>{% endfor %}
+    </div>
+    {% if verdict %}<input type="hidden" name="verdict" value="{{ verdict }}">{% endif %}
+    <select name="status" aria-label="Status" data-autosubmit>
+      <option value="">Any status</option>
+      {% for k, label in status_labels.items() %}<option value="{{ k }}" {% if status == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <input type="search" name="q" value="{{ q }}" placeholder="Subject, sender or hash" aria-label="Search" style="min-width:220px">
+    <button class="btn" type="submit">Filter</button>
+    {% if verdict or status or q %}<a class="btn" href="{{ url_for('cases') }}">Clear</a>{% endif %}
+    <span class="spacer"></span><span class="muted mono" style="font-size:12.5px">{{ total }} case{{ "" if total == 1 else "s" }}</span>
+  </form>
+
+  <section class="panel rise" style="--i:1">
+    {% if rows %}
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Verdict</th><th>Subject</th><th>From</th><th>Status</th><th>When</th></tr></thead>
+      <tbody>{% for c in rows %}<tr data-href="{{ url_for('case_detail', case_id=c.id) }}">
+        <td style="white-space:nowrap">{{ badge(c.verdict) }}<span class="scorebar v-{{ c.verdict }}"><i style="width:{{ c.score }}%"></i></span> <span class="mono muted" style="font-size:12px">{{ c.score }}</span></td>
+        <td class="trunc"><a class="row-link" href="{{ url_for('case_detail', case_id=c.id) }}">{{ c.subject or "(no subject)" }}</a></td>
+        <td class="trunc muted">{{ c.from_display + " " if c.from_display }}&lt;{{ c.from_addr }}&gt;</td>
+        <td>{{ status_pill(c.status) }}</td>
+        <td class="muted" style="white-space:nowrap"><time datetime="{{ c.created_at }}" data-ago>{{ c.created_at | short_ts }}</time></td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    <div class="pager">Page {{ page }} of {{ pages }}<span class="spacer"></span>
+      {% if page > 1 %}<a class="btn sm" href="{{ url_with(page=page - 1) }}">Previous</a>{% endif %}
+      {% if page < pages %}<a class="btn sm" href="{{ url_with(page=page + 1) }}">Next</a>{% endif %}
+    </div>
+    {% else %}
+    <div class="empty"><h3>{{ "No cases match those filters" if (verdict or status or q) else "No cases yet" }}</h3>
+      {% if verdict or status or q %}Try clearing a filter.{% else %}Analyzed emails show up here so you can track them.{% endif %}
+      <div class="row"><a class="btn primary" href="{{ url_for('analyze_page') }}">Analyze an email</a></div></div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
