@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>PhishScan report</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+.banner{padding:1.2rem;border-radius:8px;color:#fff;font-size:1.4rem;font-weight:700}
+.Safe{background:#2e7d32}.Suspicious{background:#ef6c00}.Malicious{background:#c62828}
+table{border-collapse:collapse;width:100%;margin:.5rem 0 1.5rem}th,td{border:1px solid #ddd;padding:.4rem .6rem;text-align:left;font-size:.9rem}
+th{background:#f5f5f5}code{word-break:break-all}.note{background:#fff8e1;padding:.6rem;border-left:4px solid #f9a825;margin:.4rem 0}
+</style></head><body>
+<h1>PhishScan report</h1>
+<div class="banner Malicious">Malicious &mdash; risk score 100/100</div>
+<p><b>Subject:</b> Your account is suspended<br><b>From:</b> PayPal Support &lt;support@paypa1.com&gt;</p>
+
+<h2>Why this verdict</h2>
+<table><tr><th>Finding</th><th>Points</th><th>MITRE</th></tr>
+<tr><td>DMARC result: fail</td><td>+25</td><td>T1672</td></tr>
+<tr><td>Attachment &#39;invoice.pdf.exe&#39; has a risky file type (.exe)</td><td>+25</td><td>T1566.001</td></tr>
+<tr><td>Sender domain &#39;paypa1.com&#39; imitates the brand &#39;paypal&#39;</td><td>+25</td><td>T1656</td></tr>
+<tr><td>SPF result: fail</td><td>+15</td><td>T1672</td></tr>
+<tr><td>DKIM result: fail</td><td>+15</td><td>T1672</td></tr>
+<tr><td>Reply-To domain (evil-mail.ru) differs from From domain (paypa1.com)</td><td>+15</td><td>T1656</td></tr>
+<tr><td>URL shortener used (bit.ly) hides the real destination</td><td>+10</td><td>T1566.002</td></tr>
+<tr><td>Multiple urgency/pressure phrases in subject or body</td><td>+10</td><td></td></tr>
+</table>
+
+<h2>Email authentication</h2>
+<table><tr><th>Mechanism</th><th>Result</th></tr>
+<tr><td>SPF</td><td>fail</td></tr>
+<tr><td>DKIM</td><td>fail</td></tr>
+<tr><td>DMARC</td><td>fail</td></tr>
+</table>
+
+<h2>Indicators of compromise (defanged)</h2>
+<table><tr><th>Type</th><th>Value</th></tr>
+<tr><td>URL</td><td><code>hxxp://bit[.]ly/3xYz</code></td></tr>
+
+<tr><td>SHA256</td><td>invoice.pdf.exe<br><code>71a3ed4dada577a57e0ac581d0335b18b04497385cb981e78a203a0215b889cf</code></td></tr></table>
+
+<h2>Reputation lookups</h2>
+<table><tr><th>Source</th><th>Indicator</th><th>Result</th></tr>
+<tr><td colspan="3">No lookups performed.</td></tr></table>
+<div class="note">Enrichment skipped (offline mode or no API keys); verdict uses header and content analysis only.</div>
+
+<h2>MITRE ATT&amp;CK</h2>
+<ul><li>T1672 &mdash; Email Spoofing</li><li>T1566.001 &mdash; Phishing: Spearphishing Attachment</li><li>T1656 &mdash; Impersonation</li><li>T1566.002 &mdash; Phishing: Spearphishing Link</li></ul>
+
+<h2>Recommended actions</h2>
+<ul><li>Do NOT click links or open attachments.</li><li>Quarantine/delete the message for all recipients.</li><li>Block the sender domain and listed IOCs at the mail gateway and proxy.</li><li>If anyone interacted with it, reset credentials and start incident response.</li></ul>
+</body></html>

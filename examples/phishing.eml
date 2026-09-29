@@ -1,0 +1,23 @@
+From: PayPal Support <support@paypa1.com>
+To: bob@example.org
+Subject: Your account is suspended
+Reply-To: pay@evil-mail.ru
+Authentication-Results: mx; spf=fail; dkim=fail; dmarc=fail
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2044149260129755868=="
+
+--===============2044149260129755868==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+URGENT: verify your account immediately: http://bit.ly/3xYz
+
+--===============2044149260129755868==
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="invoice.pdf.exe"
+MIME-Version: 1.0
+
+TVogZmFrZSBwYXlsb2Fk
+
+--===============2044149260129755868==--
