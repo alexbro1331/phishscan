@@ -42,3 +42,22 @@ def test_punycode_domain_in_sender_or_links():
     assert "punycode_domain" in rules(ParsedEmail(from_addr="a@xn--pypal-4ve.com"))
     i = IOCs(["http://xn--pypal-4ve.com/x"], ["xn--pypal-4ve.com"], [], [])
     assert "punycode_domain" in rules(ParsedEmail(), i)
+
+
+def test_rtl_override_filename_is_flagged_and_shown_safely():
+    from phishscan.heuristics import visible_name
+    name = "invoice\u202efdp.exe"
+    e = ParsedEmail(attachments=[Attachment(name, "x", "0" * 64, 1)])
+    assert "spoofed_filename" in rules(e)
+    assert "\u202e" not in visible_name(name) and "U+202E" in visible_name(name)
+    assert "spoofed_filename" not in rules(ParsedEmail(attachments=[Attachment("report.pdf", "x", "0" * 64, 1)]))
+
+
+def test_display_name_brand_impersonation():
+    def r(display, addr):
+        return "display_name_brand" in rules(ParsedEmail(from_display=display, from_addr=addr))
+    assert r("PayPal Support", "help@random-mail.ru")
+    assert not r("PayPal", "service@paypal.com")
+    assert not r("Amazon Web Services", "no-reply@aws.amazon.com")
+    assert not r("Apple Music", "noreply@email.apple.com")
+    assert not r("Alice Smith", "alice@example.com")

@@ -56,3 +56,17 @@ def test_report_shows_route_attachment_and_link_finding(write_eml):
 def test_safe_report_renders_without_optional_data(write_eml):
     html = render_html(analyze(write_eml(auth="mx; spf=pass; dkim=pass; dmarc=pass")))
     assert "Safe" in html and "No risk indicators" in html
+
+
+def test_unknown_to_reputation_service_is_not_shown_as_clean(write_eml):
+    from phishscan.enrich import EnrichmentResult
+
+    class Unseen:
+        def check_url(self, x):
+            return EnrichmentResult("virustotal", x, "url", malicious=0, total=0)
+        check_ip = check_hash = check_domain = check_url
+
+    a = analyze(write_eml(auth="mx; spf=pass; dkim=pass; dmarc=pass", text="see http://evil.com/x"),
+                {"virustotal": Unseen()})
+    html = render_html(a)
+    assert "not seen" in html and "0 flagged" not in html

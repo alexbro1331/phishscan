@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from . import __version__
 from .extractor import defang
-from .heuristics import dangerous_ext
+from .heuristics import dangerous_ext, visible_name
 from .mitre import TECHNIQUES
 
 _ENV = Environment(loader=FileSystemLoader(Path(__file__).parent / "templates"),
@@ -80,6 +80,8 @@ def _chip(source, *, malicious=0, total=0, score=None, error=None):
         return {"cls": "warn", "text": f"{source}: lookup failed"}
     if score is not None:
         return {"cls": "bad" if score >= 50 else "ok" if score == 0 else "warn", "text": f"{source}: abuse {score}%"}
+    if total == 0 and malicious == 0:
+        return {"cls": "", "text": f"{source}: not seen"}
     cls = "bad" if malicious >= 3 else "warn" if malicious else "ok"
     return {"cls": cls, "text": f"{source}: {malicious}/{total}" if total else f"{source}: {malicious} flagged"}
 
@@ -102,7 +104,7 @@ def build_context(a) -> dict:
     for att in e.attachments:
         chips = [{"cls": "bad", "text": f"risky type {dangerous_ext(att.filename)}"}] if dangerous_ext(att.filename) else []
         chips += rep.get(att.sha256, [])
-        attachments.append({"filename": att.filename, "content_type": att.content_type,
+        attachments.append({"filename": visible_name(att.filename), "content_type": att.content_type,
                             "size": _human_size(att.size), "sha256": att.sha256,
                             "chips": chips or [{"cls": "ok", "text": "no issues found"}]})
     return {

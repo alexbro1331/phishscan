@@ -18,7 +18,8 @@ def build_clients(env, cache=None):
         clients["virustotal"] = VirusTotal(env["VT_API_KEY"], cache=cache, limiter=RateLimiter(4, 60))
     if env.get("ABUSEIPDB_API_KEY"):
         clients["abuseipdb"] = AbuseIPDB(env["ABUSEIPDB_API_KEY"], cache=cache)
-    clients["urlscan"] = URLScan(env.get("URLSCAN_API_KEY"), cache=cache)
+    if env.get("URLSCAN_API_KEY"):
+        clients["urlscan"] = URLScan(env["URLSCAN_API_KEY"], cache=cache)
     return clients
 
 

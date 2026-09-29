@@ -114,3 +114,10 @@ def test_cache_and_limiter_usable_across_threads():
     [t.start() for t in ts]
     [t.join() for t in ts]
     assert errors == []
+
+
+def test_build_clients_only_enables_configured_services():
+    from phishscan.enrich import build_clients
+    assert build_clients({}) == {}                       # no keys: nothing leaves the machine
+    assert set(build_clients({"VT_API_KEY": "k"})) == {"virustotal"}
+    assert set(build_clients({"URLSCAN_API_KEY": "k", "ABUSEIPDB_API_KEY": "k"})) == {"urlscan", "abuseipdb"}
