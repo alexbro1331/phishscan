@@ -141,7 +141,7 @@ def create_app(clients=None, max_upload_mb=None, rate_limit=None, store=None, pa
     api_token = os.environ.get("PHISHSCAN_API_TOKEN") or None if api_token is _UNSET else (api_token or None)
     retention = retention_days if retention_days is not None else int(os.environ.get("PHISHSCAN_RETENTION_DAYS") or 0)
     if store is None:
-        store = Store(os.environ.get("PHISHSCAN_DB") or ":memory:")
+        store = Store(os.path.expanduser(os.environ.get("PHISHSCAN_DB") or ":memory:"))
     if clients is None:
         clients = {} if _truthy("PHISHSCAN_OFFLINE") else clients_from_env()
     if _truthy("PHISHSCAN_TRUST_PROXY"):
@@ -486,7 +486,7 @@ def serve(host: str = "127.0.0.1", port: int = 8000, threads: int = 4, demo: boo
         store = Store(":memory:")
         seed_demo(store)
     else:
-        path = os.environ.get("PHISHSCAN_DB") or str(Path.home() / ".phishscan" / "phishscan.db")
+        path = os.path.expanduser(os.environ.get("PHISHSCAN_DB") or str(Path.home() / ".phishscan" / "phishscan.db"))
         store = Store(":memory:" if _truthy("PHISHSCAN_MEMORY_ONLY") else path)
     app = create_app(store=store)
     log.info("PhishScan %s on http://%s:%s (%s)", __version__, host, port,

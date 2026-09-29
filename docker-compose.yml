@@ -5,12 +5,17 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - path: .env        # optional: VT_API_KEY, ABUSEIPDB_API_KEY, URLSCAN_API_KEY
+      - path: .env        # VT_API_KEY, ABUSEIPDB_API_KEY, URLSCAN_API_KEY (all optional)
         required: false
     environment:
+      # Required. The server refuses to start on a network address without a password.
+      PHISHSCAN_PASSWORD: ${PHISHSCAN_PASSWORD:?Set PHISHSCAN_PASSWORD in your .env file}
+      PHISHSCAN_API_TOKEN: ${PHISHSCAN_API_TOKEN:-}     # optional: enables Bearer-token access to /api/*
       MAX_UPLOAD_MB: "10"
-      PHISHSCAN_RATE_LIMIT: "30"        # POSTs per minute per client IP
-      # PHISHSCAN_TRUST_PROXY: "1"      # set when running behind a reverse proxy / load balancer
+      PHISHSCAN_RATE_LIMIT: "60"          # POSTs per minute per client IP
+      PHISHSCAN_RETENTION_DAYS: "90"      # auto-delete cases older than this (0 = keep forever)
+      # PHISHSCAN_TRUST_PROXY: "1"        # set behind a reverse proxy / load balancer
+      # PHISHSCAN_COOKIE_SECURE: "1"      # set when served over HTTPS
     volumes:
       - phishscan-data:/data
     restart: unless-stopped
