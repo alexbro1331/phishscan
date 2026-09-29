@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.sqlite
+*.report.html
+*.report.json
+.venv/
+.superpowers/
