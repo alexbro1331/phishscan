@@ -273,3 +273,16 @@ def test_serve_refuses_open_network_listener_without_password(monkeypatch):
     with pytest.raises(SystemExit) as e:
         web.serve(host="0.0.0.0", port=1)
     assert "PHISHSCAN_PASSWORD" in str(e.value)
+
+
+def test_retention_runs_on_first_request_even_right_after_boot(monkeypatch):
+    """The clean-up timer must not depend on how long the machine has been up (regression: CI runners)."""
+    import phishscan.web as web
+    from tests.test_store import phish
+    monkeypatch.setattr(web.time, "monotonic", lambda: 5.0)          # a machine that booted 5 seconds ago
+    store = Store(":memory:", clock=lambda: "2026-01-01T00:00:00Z")
+    store.add(phish())
+    store.clock = lambda: "2026-09-29T00:00:00Z"
+    app, c = make(store=store, retention_days=30)
+    c.get("/")
+    assert store.stats()["total"] == 0

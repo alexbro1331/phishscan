@@ -153,7 +153,7 @@ def create_app(clients=None, max_upload_mb=None, rate_limit=None, store=None, pa
                       SESSION_COOKIE_SAMESITE="Lax", SESSION_COOKIE_SECURE=_truthy("PHISHSCAN_COOKIE_SECURE"),
                       PERMANENT_SESSION_LIFETIME=12 * 3600)
     app.extensions["phishscan_store"] = store
-    purge_state = {"at": 0.0}
+    purge_state = {"at": None}  # None = never ran, so the first request always cleans up
 
     # ---------------- helpers ----------------
     def csrf_token() -> str:
@@ -199,7 +199,7 @@ def create_app(clients=None, max_upload_mb=None, rate_limit=None, store=None, pa
     # ---------------- request pipeline ----------------
     @app.before_request
     def gate():
-        if retention and time.monotonic() - purge_state["at"] > 6 * 3600:
+        if retention and (purge_state["at"] is None or time.monotonic() - purge_state["at"] > 6 * 3600):
             purge_state["at"] = time.monotonic()
             store.purge_older_than(retention)
         ip = request.remote_addr or "?"
