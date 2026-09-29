@@ -34,3 +34,22 @@ def test_enrichment_errors_become_notes(write_eml):
     a = analyze(write_eml(auth=PASS, text="see http://evil.com/x"), {"virustotal": Failing()})
     assert a.verdict.label == "Safe"
     assert any("rate limited" in n for n in a.notes)
+
+
+def test_analyze_bytes_and_metadata():
+    import hashlib
+    import phishscan
+    from phishscan.analyzer import analyze_bytes
+    from tests.helpers import build_eml
+    raw = build_eml(auth=PASS)
+    a = analyze_bytes(raw)
+    assert a.email_sha256 == hashlib.sha256(raw).hexdigest()
+    assert a.version == phishscan.__version__
+    assert a.analyzed_at.endswith("Z")
+
+
+def test_analyze_bytes_bad_input_raises_valueerror():
+    import pytest
+    from phishscan.analyzer import analyze_bytes
+    with pytest.raises(ValueError):
+        analyze_bytes(b"")

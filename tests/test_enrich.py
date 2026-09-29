@@ -95,3 +95,22 @@ def test_run_enrichment_findings():
 
 def test_run_enrichment_no_clients_is_empty():
     assert run_enrichment(IOCs(["http://a.com"], ["a.com"], [], []), {}) == ([], [])
+
+
+def test_cache_and_limiter_usable_across_threads():
+    import threading
+    c = Cache()
+    errors = []
+
+    def work(n):
+        try:
+            for i in range(20):
+                c.set(f"k{n}-{i}", {"v": i})
+                assert c.get(f"k{n}-{i}") == {"v": i}
+        except Exception as exc:  # noqa: BLE001
+            errors.append(exc)
+
+    ts = [threading.Thread(target=work, args=(n,)) for n in range(4)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert errors == []

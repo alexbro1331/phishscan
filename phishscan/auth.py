@@ -5,6 +5,7 @@ from .weights import finding
 
 _RES = re.compile(r"\b(spf|dkim|dmarc)=(\w+)", re.I)
 _BAD = {"fail", "softfail", "permerror"}
+_SPF_HDR = re.compile(r"\s*(pass|fail|softfail|neutral|none|permerror|temperror)\b", re.I)
 _EMAIL_IN_TEXT = re.compile(r"[\w.+-]+@([\w-]+(?:\.[\w-]+)+)")
 
 
@@ -16,6 +17,10 @@ def analyze_auth(email: ParsedEmail):
     results: dict[str, str] = {}
     for mech, res in _RES.findall(email.auth_results or ""):
         results.setdefault(mech.lower(), res.lower())
+    if "spf" not in results:
+        m = _SPF_HDR.match(email.received_spf or "")
+        if m:
+            results["spf"] = m.group(1).lower()
     findings = []
     if not results:
         findings.append(finding("no_auth_results",

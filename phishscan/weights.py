@@ -6,6 +6,7 @@ WEIGHTS = {
     "reply_to_mismatch": 15, "return_path_mismatch": 10, "display_name_spoof": 20,
     "lookalike_domain": 25, "url_flagged": 40, "ip_abuse": 20, "attachment_malicious": 50,
     "dangerous_extension": 25, "url_shortener": 10, "ip_literal_url": 15, "urgency_language": 10,
+    "link_text_mismatch": 25, "punycode_domain": 20,
 }
 SUSPICIOUS_AT, MALICIOUS_AT = 30, 60
 

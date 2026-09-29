@@ -42,3 +42,33 @@ def test_unnamed_attachment(tmp_path):
     f.write_bytes(raw)
     a = parse_eml(f).attachments[0]
     assert a.filename == "(unnamed)" and len(a.sha256) == 64
+
+
+def test_extra_fields_and_raw_headers(write_eml):
+    p = parse_eml(write_eml(received=["from a (x) by b; Mon, 1 Jan 2024 10:00:00 +0000"]))
+    assert p.to_addr == "bob@example.org"
+    assert p.message_id == "" or p.message_id.startswith("<")
+    names = [n.lower() for n, _ in p.headers]
+    assert "from" in names and "received" in names
+
+
+def test_received_spf_captured(tmp_path):
+    f = tmp_path / "r.eml"
+    f.write_bytes(b"From: a@b.com\r\nReceived-SPF: fail (domain does not designate)\r\n\r\nhi")
+    assert parse_eml(f).received_spf.startswith("fail")
+
+
+def test_parse_bytes_rejects_empty_and_garbage():
+    import pytest
+    from phishscan.parser import parse_bytes
+    with pytest.raises(ValueError, match="empty"):
+        parse_bytes(b"")
+    with pytest.raises(ValueError, match="not a valid email"):
+        parse_bytes(b"\x00\x01\x02 just binary garbage with no headers at all")
+
+
+def test_parse_bytes_rejects_oversize():
+    import pytest
+    from phishscan.parser import parse_bytes
+    with pytest.raises(ValueError, match="too large"):
+        parse_bytes(b"From: a@b.com\r\n\r\n" + b"x" * 100, max_bytes=50)

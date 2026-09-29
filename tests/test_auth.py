@@ -35,3 +35,15 @@ def test_display_name_spoof():
     e = ParsedEmail(from_display="support@paypal.com", from_addr="x@evil.com",
                     auth_results="spf=pass; dkim=pass; dmarc=pass")
     assert rules(analyze_auth(e)[1]) == {"display_name_spoof"}
+
+
+def test_received_spf_fallback_when_no_auth_results():
+    e = ParsedEmail(from_addr="a@x.com", received_spf="fail (sender not permitted)")
+    res, f = analyze_auth(e)
+    assert res.get("spf") == "fail" and "spf_fail" in rules(f)
+
+
+def test_first_auth_results_header_wins():
+    e = ParsedEmail(from_addr="a@x.com",
+                    auth_results="mx1; spf=pass; dkim=pass; dmarc=pass mx2; spf=fail")
+    assert analyze_auth(e)[0]["spf"] == "pass"

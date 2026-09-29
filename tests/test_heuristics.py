@@ -26,3 +26,19 @@ def test_lookalike_domains():
     for addr, expected in [("a@paypa1.com", True), ("a@paypal-secure.com", True), ("a@paypal.com", False),
                            ("a@example.com", False), ("a@maple.com", False)]:
         assert ("lookalike_domain" in rules(ParsedEmail(from_addr=addr))) is expected, addr
+
+
+def test_link_text_mismatch():
+    e = ParsedEmail(html='<a href="http://evil.com/x">https://www.paypal.com/login</a>')
+    assert "link_text_mismatch" in rules(e)
+
+
+def test_link_text_matching_or_plain_text_is_fine():
+    ok = ParsedEmail(html='<a href="http://paypal.com/a">paypal.com</a> <a href="http://evil.com/x">click here</a>')
+    assert "link_text_mismatch" not in rules(ok)
+
+
+def test_punycode_domain_in_sender_or_links():
+    assert "punycode_domain" in rules(ParsedEmail(from_addr="a@xn--pypal-4ve.com"))
+    i = IOCs(["http://xn--pypal-4ve.com/x"], ["xn--pypal-4ve.com"], [], [])
+    assert "punycode_domain" in rules(ParsedEmail(), i)
