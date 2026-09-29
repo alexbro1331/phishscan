@@ -6,9 +6,9 @@ TECHNIQUES = {
     "T1672": "Email Spoofing",
 }
 RULE_TO_TECHNIQUE = {
-    "url_flagged": "T1566.002", "url_shortener": "T1566.002", "ip_literal_url": "T1566.002",
+    "url_flagged": "T1566.002", "link_text_mismatch": "T1566.002", "url_shortener": "T1566.002", "ip_literal_url": "T1566.002",
     "attachment_malicious": "T1566.001", "dangerous_extension": "T1566.001",
-    "display_name_spoof": "T1656", "lookalike_domain": "T1656", "reply_to_mismatch": "T1656",
+    "display_name_spoof": "T1656", "lookalike_domain": "T1656", "punycode_domain": "T1656", "reply_to_mismatch": "T1656",
     "spf_fail": "T1672", "dkim_fail": "T1672", "dmarc_fail": "T1672", "return_path_mismatch": "T1672",
 }
 

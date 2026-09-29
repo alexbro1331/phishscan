@@ -1,7 +1,9 @@
 import re
+from html.parser import HTMLParser
 from urllib.parse import urlparse
 
 from .auth import domain_of
+from .extractor import defang
 from .weights import finding
 
 SHORTENERS = {"bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly", "is.gd", "buff.ly", "rebrand.ly"}
@@ -12,6 +14,48 @@ BRANDS = ["paypal", "microsoft", "google", "amazon", "apple", "netflix", "facebo
 URGENCY = re.compile(r"urgent|immediately|verify your account|suspended|within 24 hours|"
                      r"password (?:will )?expires?|act now", re.I)
 _IPV4 = re.compile(r"^\d{1,3}(?:\.\d{1,3}){3}$")
+_TEXT_DOMAIN = re.compile(r"^(?:https?://)?((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[/:?#]|$)", re.I)
+
+
+class _Links(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.pairs, self._href, self._text = [], None, []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            self._href, self._text = dict(attrs).get("href"), []
+
+    def handle_data(self, data):
+        if self._href is not None:
+            self._text.append(data)
+
+    def handle_endtag(self, tag):
+        if tag == "a" and self._href is not None:
+            self.pairs.append((self._href, "".join(self._text).strip()))
+            self._href = None
+
+
+def _base(host: str) -> str:
+    return ".".join(host.lower().split(".")[-2:])
+
+
+def _link_mismatches(html: str):
+    if not html:
+        return []
+    parser = _Links()
+    try:
+        parser.feed(html)
+        parser.close()
+    except Exception:
+        return []
+    out = []
+    for href, text in parser.pairs:
+        m = _TEXT_DOMAIN.match(text)
+        host = (urlparse(href).hostname or "") if href.lower().startswith(("http://", "https://")) else ""
+        if m and host and _base(m.group(1)) != _base(host):
+            out.append((m.group(1), host))
+    return out
 
 
 def _lev(a: str, b: str) -> int:
@@ -52,6 +96,14 @@ def analyze_content(email, iocs):
         ext = name[name.rfind("."):] if "." in name else ""
         if ext in DANGEROUS_EXT:
             out.append(finding("dangerous_extension", f"Attachment '{a.filename}' has a risky file type ({ext})"))
+    for shown, real in _link_mismatches(email.html):
+        out.append(finding("link_text_mismatch",
+                           f"Link text shows {defang(shown)} but points to {defang(real)}"))
+    puny = [d for d in [*iocs.domains, domain_of(email.from_addr)]
+            if any(label.startswith("xn--") for label in d.split("."))]
+    if puny:
+        out.append(finding("punycode_domain",
+                           f"Internationalized (punycode) domain can hide a look-alike: {defang(puny[0])}"))
     brand = _lookalike(domain_of(email.from_addr))
     if brand:
         out.append(finding("lookalike_domain",
