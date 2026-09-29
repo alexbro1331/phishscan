@@ -13,6 +13,7 @@ BRANDS = ["paypal", "microsoft", "google", "amazon", "apple", "netflix", "facebo
           "linkedin", "instagram"]
 URGENCY = re.compile(r"urgent|immediately|verify your account|suspended|within 24 hours|"
                      r"password (?:will )?expires?|act now", re.I)
+_BIDI = {chr(c) for c in (*range(0x202A, 0x202F), *range(0x2066, 0x206A), 0x200E, 0x200F)}
 _IPV4 = re.compile(r"^\d{1,3}(?:\.\d{1,3}){3}$")
 _TEXT_DOMAIN = re.compile(r"^(?:https?://)?((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[/:?#]|$)", re.I)
 
@@ -58,6 +59,11 @@ def _link_mismatches(html: str):
     return out
 
 
+def visible_name(filename: str) -> str:
+    """Make invisible direction-override characters visible so a filename cannot lie in a report."""
+    return "".join(f"<U+{ord(c):04X}>" if c in _BIDI else c for c in filename)
+
+
 def dangerous_ext(filename: str) -> str | None:
     name = filename.lower()
     ext = name[name.rfind("."):] if "." in name else ""
@@ -98,9 +104,12 @@ def analyze_content(email, iocs):
     if len(URGENCY.findall(f"{email.subject} {email.text}")) >= 2:
         out.append(finding("urgency_language", "Multiple urgency/pressure phrases in subject or body"))
     for a in email.attachments:
+        if any(c in _BIDI for c in a.filename):
+            out.append(finding("spoofed_filename",
+                               f"Attachment name contains a hidden direction-override character: {visible_name(a.filename)}"))
         ext = dangerous_ext(a.filename)
         if ext:
-            out.append(finding("dangerous_extension", f"Attachment '{a.filename}' has a risky file type ({ext})"))
+            out.append(finding("dangerous_extension", f"Attachment '{visible_name(a.filename)}' has a risky file type ({ext})"))
     for shown, real in _link_mismatches(email.html):
         out.append(finding("link_text_mismatch",
                            f"Link text shows {defang(shown)} but points to {defang(real)}"))
@@ -109,6 +118,14 @@ def analyze_content(email, iocs):
     if puny:
         out.append(finding("punycode_domain",
                            f"Internationalized (punycode) domain can hide a look-alike: {defang(puny[0])}"))
+    sender_parts = domain_of(email.from_addr).split(".")
+    sender_label = sender_parts[-2] if len(sender_parts) >= 2 else ""
+    shown = email.from_display.lower()
+    for b in BRANDS:
+        if re.search(rf"\b{b}\b", shown) and b not in sender_label:
+            out.append(finding("display_name_brand",
+                               f"Display name mentions '{b}' but the message was sent from {defang(domain_of(email.from_addr))}"))
+            break
     brand = _lookalike(domain_of(email.from_addr))
     if brand:
         out.append(finding("lookalike_domain",
