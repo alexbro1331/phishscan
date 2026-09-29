@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>PhishScan report</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#1a1a1a}
+.banner{padding:1.2rem;border-radius:8px;color:#fff;font-size:1.4rem;font-weight:700}
+.Safe{background:#2e7d32}.Suspicious{background:#ef6c00}.Malicious{background:#c62828}
+table{border-collapse:collapse;width:100%;margin:.5rem 0 1.5rem}th,td{border:1px solid #ddd;padding:.4rem .6rem;text-align:left;font-size:.9rem}
+th{background:#f5f5f5}code{word-break:break-all}.note{background:#fff8e1;padding:.6rem;border-left:4px solid #f9a825;margin:.4rem 0}
+</style></head><body>
+<h1>PhishScan report</h1>
+<div class="banner {{ a.verdict.label }}">{{ a.verdict.label }} &mdash; risk score {{ a.verdict.score }}/100</div>
+<p><b>Subject:</b> {{ a.email.subject }}<br><b>From:</b> {{ a.email.from_display }} &lt;{{ a.email.from_addr }}&gt;</p>
+
+<h2>Why this verdict</h2>
+<table><tr><th>Finding</th><th>Points</th><th>MITRE</th></tr>
+{% for f in a.verdict.findings %}<tr><td>{{ f.reason }}</td><td>+{{ f.points }}</td><td>{{ f.mitre or "" }}</td></tr>
+{% else %}<tr><td colspan="3">No risk indicators found.</td></tr>{% endfor %}</table>
+
+<h2>Email authentication</h2>
+<table><tr><th>Mechanism</th><th>Result</th></tr>
+{% for k, v in a.auth_results.items() %}<tr><td>{{ k | upper }}</td><td>{{ v }}</td></tr>
+{% else %}<tr><td colspan="2">No Authentication-Results header present.</td></tr>{% endfor %}</table>
+
+<h2>Indicators of compromise (defanged)</h2>
+<table><tr><th>Type</th><th>Value</th></tr>
+{% for u in a.iocs.urls %}<tr><td>URL</td><td><code>{{ u | defang }}</code></td></tr>{% endfor %}
+{% for i in a.iocs.ips %}<tr><td>IP</td><td><code>{{ i | defang }}</code></td></tr>{% endfor %}
+{% for n, h in a.iocs.hashes %}<tr><td>SHA256</td><td>{{ n }}<br><code>{{ h }}</code></td></tr>{% endfor %}</table>
+
+<h2>Reputation lookups</h2>
+<table><tr><th>Source</th><th>Indicator</th><th>Result</th></tr>
+{% for r in a.enrichment %}<tr><td>{{ r.source }}</td><td><code>{{ r.indicator | defang }}</code></td>
+<td>{% if r.error %}error: {{ r.error }}{% elif r.score is not none %}abuse score {{ r.score }}%{% else %}{{ r.malicious }}/{{ r.total }} detections{% endif %}</td></tr>
+{% else %}<tr><td colspan="3">No lookups performed.</td></tr>{% endfor %}</table>
+{% for n in a.notes %}<div class="note">{{ n }}</div>{% endfor %}
+
+<h2>MITRE ATT&amp;CK</h2>
+<ul>{% for i, n in a.techniques %}<li>{{ i }} &mdash; {{ n }}</li>{% else %}<li>None mapped.</li>{% endfor %}</ul>
+
+<h2>Recommended actions</h2>
+<ul>{% for x in actions %}<li>{{ x }}</li>{% endfor %}</ul>
+</body></html>
