@@ -1,0 +1,16 @@
+{% from "_macros.html" import logo %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}PhishScan{% endblock %}</title>
+<style>{% include "app.css" %}</style>
+</head>
+<body>
+<div class="standalone">
+  <a class="brand" href="{{ home_href | default('#') }}">{{ logo() }}<span>PhishScan<small>Email triage console</small></span></a>
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>

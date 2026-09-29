@@ -1,0 +1,57 @@
+{% from "_macros.html" import logo, icon %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>{% block title %}PhishScan{% endblock %} · PhishScan</title>
+<link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <a class="brand" href="{{ url_for('dashboard') }}">{{ logo() }}<span>PhishScan<small>Email triage console</small></span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="{{ url_for('dashboard') }}" {% if active == 'dashboard' %}aria-current="page"{% endif %}>{{ icon('dash') }}Dashboard</a>
+      <a href="{{ url_for('analyze_page') }}" {% if active == 'analyze' %}aria-current="page"{% endif %}>{{ icon('upload') }}Analyze</a>
+      <a href="{{ url_for('cases') }}" {% if active == 'cases' %}aria-current="page"{% endif %}>{{ icon('cases') }}Cases{% if open_count %}<span class="n">{{ open_count }}</span>{% endif %}</a>
+      <a href="{{ url_for('indicators') }}" {% if active == 'iocs' %}aria-current="page"{% endif %}>{{ icon('iocs') }}Indicators</a>
+      <a href="{{ url_for('settings') }}" {% if active == 'settings' %}aria-current="page"{% endif %}>{{ icon('settings') }}Settings</a>
+    </nav>
+    <div class="side-foot">
+      <div class="status" title="{{ 'Reputation lookups are enabled' if lookups else 'No API keys configured: analysis runs fully offline' }}"><span class="dot {{ 'on' if lookups }}"></span>{{ 'Lookups on' if lookups else 'Offline mode' }}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="iconbtn" type="button" data-theme-toggle title="Toggle light / dark">{{ icon('theme') }}</button>
+        {% if auth_enabled %}<form method="post" action="{{ url_for('logout') }}" style="margin:0"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="iconbtn" title="Sign out">{{ icon('logout') }}</button></form>{% endif %}
+        <span class="faint mono" style="margin-left:auto">v{{ version }}</span>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <h1>{% block heading %}{{ self.title() }}{% endblock %}</h1>
+      <span class="spacer"></span>
+      <form class="search" action="{{ url_for('cases') }}" method="get" role="search">
+        {{ icon('search') }}<input type="search" name="q" value="{{ request.args.get('q', '') if request.endpoint == 'cases' else '' }}" placeholder="Search cases" aria-label="Search cases" data-search><kbd>/</kbd>
+      </form>
+      <a class="btn primary" href="{{ url_for('analyze_page') }}">{{ icon('upload') }}New analysis</a>
+    </header>
+    <main class="page">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+<div class="overlay" id="scan" role="dialog" aria-modal="true" aria-labelledby="scan-title">
+  <div class="scan">
+    <h3 id="scan-title">Analyzing message…</h3>
+    <div class="scan-vis"><i></i><i></i><i></i><i></i></div>
+    <ol class="steps" id="scan-steps"></ol>
+    <div class="err" id="scan-err" hidden></div>
+    <div class="row" id="scan-close" hidden style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn" type="button" data-scan-close>Close</button></div>
+  </div>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

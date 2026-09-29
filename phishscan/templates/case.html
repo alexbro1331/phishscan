@@ -1,0 +1,61 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon, badge %}
+{% block title %}Case #{{ case.id }}{% endblock %}
+{% block heading %}<span class="crumb"><a href="{{ url_for('cases') }}" style="color:inherit;text-decoration:none">Cases</a> /</span> #{{ case.id }}{% endblock %}
+{% block content %}
+{% set interactive = true %}
+<div class="case-top rise">
+  <div class="ttl"><h1>{{ r.subject or "(no subject)" }}</h1>
+    <div class="muted" style="font-size:12.5px">Analyzed <time datetime="{{ case.created_at }}" data-ago>{{ case.created_at | short_ts }}</time> · sha256 <span class="mono">{{ case.sha256[:16] }}…</span></div></div>
+  <div class="head-actions">
+    <select data-status data-case="{{ case.id }}" aria-label="Case status">
+      {% for k, label in status_labels.items() %}<option value="{{ k }}" {% if case.status == k %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+    <a class="btn" href="{{ url_for('case_report', case_id=case.id, download=1) }}">{{ icon('download') }}Report</a>
+    <a class="btn" href="{{ url_for('case_json', case_id=case.id) }}">JSON</a>
+    <button class="btn danger" type="button" data-open-dialog="del" title="Delete case">{{ icon('trash') }}</button>
+  </div>
+</div>
+
+{% include "_verdict.html" %}
+
+<div class="grid g-main-side" style="margin-top:14px">
+  <div class="stack">
+    {% include "_doit.html" %}
+    {% include "_evidence.html" %}
+  </div>
+  <aside class="stack">
+    <section class="panel rise" style="--i:3">
+      <div class="panel-h"><h2>Analyst notes</h2><span class="spacer"></span><span class="saved" id="saved"></span></div>
+      <div class="panel-b"><textarea data-notes data-case="{{ case.id }}" maxlength="20000" placeholder="What did you find? Who did you contact? What was blocked?">{{ case.notes }}</textarea></div>
+    </section>
+    <section class="panel rise" style="--i:4">
+      <div class="panel-h"><h2>Details</h2></div>
+      <div class="panel-b"><dl class="kv">
+        <dt>Case</dt><dd>#{{ case.id }}</dd>
+        <dt>Analyzed</dt><dd>{{ r.analyzed_at }}</dd>
+        {% if r.message_id %}<dt>Message-ID</dt><dd class="mono">{{ r.message_id }}</dd>{% endif %}
+        <dt>SHA-256</dt><dd class="mono">{{ case.sha256 }}</dd>
+        <dt>Version</dt><dd>PhishScan {{ r.version }}</dd>
+      </dl></div>
+    </section>
+    <section class="panel rise" style="--i:5">
+      <div class="panel-h"><h2>Export</h2></div>
+      <div class="panel-b" style="display:grid;gap:8px">
+        <a class="btn" href="{{ url_for('case_report', case_id=case.id, download=1) }}">{{ icon('download') }}Standalone HTML report</a>
+        <a class="btn" href="{{ url_for('case_json', case_id=case.id) }}">{{ icon('download') }}JSON</a>
+        <a class="btn" href="{{ url_for('case_iocs_csv', case_id=case.id) }}">{{ icon('download') }}Indicators (CSV)</a>
+      </div>
+    </section>
+  </aside>
+</div>
+
+<dialog id="del">
+  <h3>Delete this case?</h3>
+  <p class="muted">The analysis, notes and its indicators are removed from this server. This cannot be undone.</p>
+  <form method="post" action="{{ url_for('case_delete', case_id=case.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row"><button class="btn" type="button" data-close-dialog>Cancel</button><button class="btn danger" type="submit">Delete case</button></div>
+  </form>
+</dialog>
+{% endblock %}

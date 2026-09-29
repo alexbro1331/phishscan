@@ -39,7 +39,7 @@ def test_report_has_no_javascript_and_key_sections(write_eml):
     html = render_html(_phish(write_eml))
     assert "<script" not in html.lower()
     for section in ("Verdict", "Why this verdict", "Email authentication", "Mail route",
-                    "Attachments", "Indicators of compromise", "MITRE ATT&amp;CK", "Recommended actions"):
+                    "Attachments", "Indicators of compromise", "MITRE ATT&amp;CK", "What to do now"):
         assert section in html, section
 
 
@@ -70,3 +70,11 @@ def test_unknown_to_reputation_service_is_not_shown_as_clean(write_eml):
                 {"virustotal": Unseen()})
     html = render_html(a)
     assert "not seen" in html and "0 flagged" not in html
+
+
+def test_mail_route_hops_are_parsed_cleanly():
+    from phishscan.report import _hops
+    hops = _hops(["from b.example (b.example [8.8.8.8]) by c.example.net; Mon, 15 Jan 2024 09:12:46 +0000",
+                  "from a.example ([203.0.113.9]) by b.example with ESMTP; Mon, 15 Jan 2024 09:12:44 +0000"])
+    assert [h["by"] for h in hops] == ["b[.]example", "c[.]example[.]net"]        # oldest first, no stray ';'
+    assert hops[1]["ip"] == "8[.]8[.]8[.]8" and hops[1]["time"].startswith("Mon, 15 Jan")

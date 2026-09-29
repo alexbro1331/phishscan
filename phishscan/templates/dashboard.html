@@ -1,0 +1,86 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon, badge, status_pill %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stack">
+  {% include "_dropzone.html" %}
+
+  {% if stats.total == 0 %}
+  <section class="panel rise" style="--i:1">
+    <div class="empty">
+      <h3>No analyses yet</h3>
+      Drop a suspicious email above, or try one of the built-in samples to see what a finished analysis looks like.
+      <div class="row">
+        {% for key, s in samples.items() %}
+        <form method="post" action="{{ url_for('analyze_sample', name=key) }}" data-scan><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn primary" type="submit">Analyze: {{ s[0] }}</button></form>
+        {% endfor %}
+        <form method="post" action="{{ url_for('seed_demo_data') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn" type="submit">Load demo data</button></form>
+      </div>
+    </div>
+  </section>
+  {% else %}
+
+  <div class="kpis">
+    <div class="kpi rise" style="--i:1"><div class="l">Analyzed</div><div class="v" data-count="{{ stats.total }}">{{ stats.total }}</div><div class="s">last 14 days: {{ recent_total }}</div>{% if sparks.total %}<svg class="spark" viewBox="0 0 90 28"><polyline points="{{ sparks.total }}"/></svg>{% endif %}</div>
+    <div class="kpi v-Malicious rise" style="--i:2"><div class="l">Malicious</div><div class="v" data-count="{{ stats.malicious }}">{{ stats.malicious }}</div><div class="s">{{ mal_pct }}% of all</div>{% if sparks.malicious %}<svg class="spark" viewBox="0 0 90 28"><polyline points="{{ sparks.malicious }}"/></svg>{% endif %}</div>
+    <div class="kpi v-Suspicious rise" style="--i:3"><div class="l">Suspicious</div><div class="v" data-count="{{ stats.suspicious }}">{{ stats.suspicious }}</div><div class="s">need a second look</div>{% if sparks.suspicious %}<svg class="spark" viewBox="0 0 90 28"><polyline points="{{ sparks.suspicious }}"/></svg>{% endif %}</div>
+    <div class="kpi rise" style="--i:4;--vc:var(--accent)"><div class="l">Open cases</div><div class="v" data-count="{{ stats.open }}">{{ stats.open }}</div><div class="s"><a href="{{ url_for('cases', status='new') }}">{{ new_count }} untouched</a></div></div>
+  </div>
+
+  <div class="grid g-2-1">
+    <section class="panel rise" style="--i:5">
+      <div class="panel-h"><h2>Activity, last 14 days</h2><span class="spacer"></span>
+        <div class="legend"><span class="malicious">Malicious</span><span class="suspicious">Suspicious</span><span class="safe">Safe</span></div></div>
+      <div class="panel-b chart">
+        <svg viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img" aria-label="Emails analyzed per day, stacked by verdict">
+          <g transform="translate({{ chart.left }},{{ chart.top }})">
+            {% for g in chart.gridlines %}<line class="grid" x1="0" x2="{{ chart.plot_w }}" y1="{{ g.y }}" y2="{{ g.y }}"/><text x="-8" y="{{ g.y + 3 }}" text-anchor="end">{{ g.label }}</text>{% endfor %}
+            {% for b in chart.bars %}{% set bi = loop.index0 %}<g><title>{{ b.tip }}</title>
+              {% for s in b.segments %}<rect class="seg {{ s.cls }}" x="{{ b.x }}" y="{{ s.y }}" width="{{ b.w }}" height="{{ s.h }}" rx="1.5" style="--i:{{ bi }}"/>{% endfor %}
+              <rect class="hit" x="{{ b.x - 3 }}" y="0" width="{{ b.w + 6 }}" height="{{ chart.plot_h }}"/></g>{% endfor %}
+            {% for x in chart.xlabels %}<text x="{{ x.x }}" y="{{ chart.plot_h + 16 }}" text-anchor="middle">{{ x.label }}</text>{% endfor %}
+          </g>
+        </svg>
+      </div>
+    </section>
+    <section class="panel col rise" style="--i:6">
+      <div class="panel-h"><h2>Verdict mix</h2></div>
+      <div class="panel-b"><div class="donut-wrap">
+        <div style="position:relative;width:132px;height:132px;flex:none">
+          <svg class="donut" viewBox="0 0 100 100" role="img" aria-label="Verdict mix"><circle class="ring" cx="50" cy="50" r="{{ donut.r }}"/>
+            {% for s in donut.segments %}<circle class="arc {{ s.cls }}" cx="50" cy="50" r="{{ donut.r }}" stroke-dasharray="{{ s.dash }} {{ donut.circ - s.dash }}" stroke-dashoffset="{{ s.offset }}" style="--c:{{ donut.circ }};--i:{{ loop.index0 }}"/>{% endfor %}</svg>
+          <div class="donut-mid"><div><b>{{ donut.total }}</b><span>analyzed</span></div></div>
+        </div>
+        <div class="dl">
+          <div><i class="sw" style="background:var(--red)"></i>Malicious<b>{{ stats.malicious }}</b></div>
+          <div><i class="sw" style="background:var(--amber)"></i>Suspicious<b>{{ stats.suspicious }}</b></div>
+          <div><i class="sw" style="background:var(--green)"></i>Safe<b>{{ stats.safe }}</b></div>
+        </div>
+      </div></div>
+    </section>
+  </div>
+
+  <div class="grid g-2-1">
+    <section class="panel rise" style="--i:7">
+      <div class="panel-h"><h2>Recent cases</h2><span class="spacer"></span><a class="btn sm" href="{{ url_for('cases') }}">View all</a></div>
+      <div class="table-wrap"><table class="t">
+        <thead><tr><th>Verdict</th><th>Subject</th><th>Status</th><th>When</th></tr></thead>
+        <tbody>{% for c in recent %}<tr data-href="{{ url_for('case_detail', case_id=c.id) }}">
+          <td style="white-space:nowrap">{{ badge(c.verdict) }}<span class="scorebar v-{{ c.verdict }}"><i style="width:{{ c.score }}%"></i></span></td>
+          <td class="trunc"><a class="row-link" href="{{ url_for('case_detail', case_id=c.id) }}">{{ c.subject or "(no subject)" }}</a><div class="sub">{{ c.from_addr }}</div></td>
+          <td>{{ status_pill(c.status) }}</td>
+          <td class="muted" style="white-space:nowrap"><time datetime="{{ c.created_at }}" data-ago>{{ c.created_at | short_ts }}</time></td>
+        </tr>{% endfor %}</tbody>
+      </table></div>
+    </section>
+    <section class="panel rise" style="--i:8">
+      <div class="panel-h"><h2>Top detections</h2></div>
+      <div class="panel-b"><div class="hbars">
+        {% for r in top_rules %}<div class="hbar"><div class="top2"><span>{{ r.title }}</span><b>{{ r.count }}</b></div><div class="track"><i style="width:{{ r.pct }}%;--i:{{ loop.index0 }}"></i></div></div>
+        {% else %}<span class="muted">Nothing detected yet.</span>{% endfor %}
+      </div></div>
+    </section>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

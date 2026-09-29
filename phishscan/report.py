@@ -9,10 +9,13 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from . import __version__
 from .extractor import defang
 from .heuristics import dangerous_ext, visible_name
+from .labels import rule_title
 from .mitre import TECHNIQUES
 
-_ENV = Environment(loader=FileSystemLoader(Path(__file__).parent / "templates"),
-                   autoescape=select_autoescape(["html", "j2"]))
+_HERE = Path(__file__).parent
+# static/ is on the search path so standalone reports can inline app.css
+_ENV = Environment(loader=FileSystemLoader([str(_HERE / "templates"), str(_HERE / "static")]),
+                   autoescape=select_autoescape(["html", "j2", "xml"], default=True))
 _ENV.filters["defang"] = defang
 
 ACTIONS = {
@@ -65,8 +68,8 @@ def _hops(received: list) -> list:
     """Oldest hop first. Best-effort parse of Received headers."""
     hops = []
     for raw in reversed(received or []):
-        frm = re.search(r"\bfrom\s+(\S+)", raw, re.I)
-        by = re.search(r"\bby\s+(\S+)", raw, re.I)
+        frm = re.search(r"\bfrom\s+([^\s;]+)", raw, re.I)
+        by = re.search(r"\bby\s+([^\s;]+)", raw, re.I)
         ips = _IP.findall(raw)
         ip = next((i for i in ips if _public(i)), ips[0] if ips else "")
         time = raw.rsplit(";", 1)[1].strip() if ";" in raw else ""
@@ -114,13 +117,13 @@ def build_context(a) -> dict:
         "subject": e.subject, "from_display": e.from_display, "from_addr": e.from_addr,
         "to_addr": e.to_addr, "date": e.date, "message_id": e.message_id,
         "notes": a.notes,
-        "findings": [{"rule": f.rule.replace("_", " "), "points": f.points, "reason": f.reason,
+        "findings": [{"rule": f.rule, "title": rule_title(f.rule), "points": f.points, "reason": f.reason,
                       "sev": _sev(f.points), "mitre": f.mitre, "mitre_name": TECHNIQUES.get(f.mitre, "")}
                      for f in v.findings],
         "auth": auth, "hops": _hops(e.received), "attachments": attachments, "iocs": iocs,
         "techniques": [{"id": i, "name": n} for i, n in a.techniques],
         "actions": ACTIONS[v.label], "headers": e.headers,
-        "analyzed_at": a.analyzed_at, "email_sha256": a.email_sha256,
+        "analyzed_at": a.analyzed_at, "email_sha256": a.email_sha256, "version": a.version,
     }
 
 
@@ -129,8 +132,13 @@ def render_page(template: str, **ctx) -> str:
     return _ENV.get_template(template).render(**ctx)
 
 
+def render_report_html(ctx: dict) -> str:
+    """Standalone, self-contained, JavaScript-free report from a saved context."""
+    return render_page("report_standalone.html", r=ctx, version=ctx.get("version", __version__))
+
+
 def render_html(a) -> str:
-    return render_page("report.html.j2", r=build_context(a), version=a.version)
+    return render_report_html(build_context(a))
 
 
 def render_json(a) -> str:

@@ -1,0 +1,6 @@
+<section class="panel doit v-{{ r.label }} rise" style="--i:2">
+  <div class="panel-h"><h2>What to do now</h2></div>
+  <div class="panel-b"><ul>
+    {% for x in r.actions %}<li><label><input type="checkbox"><span>{{ x }}</span></label></li>{% endfor %}
+  </ul></div>
+</section>

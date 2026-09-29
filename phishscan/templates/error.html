@@ -1,0 +1,12 @@
+{% extends "layout_standalone.html" %}
+{% block title %}PhishScan · Error {{ code }}{% endblock %}
+{% block content %}
+<section class="panel v-Malicious rise" style="border-left:4px solid var(--vc);max-width:560px;margin:8vh auto 0">
+  <div class="panel-b" style="padding:26px">
+    <span class="badge">Error {{ code }}</span>
+    <h1 style="font-size:19px;margin:12px 0 6px">That did not work</h1>
+    <p class="muted" style="margin-bottom:18px">{{ message }}</p>
+    <a class="btn primary" href="{{ home_href | default('/') }}">Back to the dashboard</a>
+  </div>
+</section>
+{% endblock %}

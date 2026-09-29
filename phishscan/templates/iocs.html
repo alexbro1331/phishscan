@@ -1,0 +1,38 @@
+{% extends "layout_app.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Indicators{% endblock %}
+{% block content %}
+<div class="stack">
+  <form method="get" action="{{ url_for('indicators') }}" class="rise" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div class="seg-tabs">
+      <a href="{{ url_with(kind=None, page=None) }}" {% if not kind %}aria-current="true"{% endif %}>All</a>
+      {% for k in ["URL", "Domain", "IP", "Hash"] %}<a href="{{ url_with(kind=k, page=None) }}" {% if kind == k %}aria-current="true"{% endif %}>{{ k }}</a>{% endfor %}
+    </div>
+    {% if kind %}<input type="hidden" name="kind" value="{{ kind }}">{% endif %}
+    <input type="search" name="q" value="{{ q }}" placeholder="Filter indicators" aria-label="Filter" style="min-width:220px">
+    <button class="btn" type="submit">Filter</button>
+    <span class="spacer"></span>
+    <a class="btn" href="{{ url_for('indicators_csv', kind=kind, q=q) }}">{{ icon('download') }}Export CSV (defanged)</a>
+    <a class="btn" href="{{ url_for('indicators_csv', kind=kind, q=q, raw=1) }}" title="Live values for pasting into a blocklist. Handle with care.">{{ icon('download') }}Export raw</a>
+  </form>
+  <section class="panel rise" style="--i:1">
+    <div class="panel-h"><h2>Seen across all cases</h2><span class="c">{{ total }}</span></div>
+    {% if rows %}
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Type</th><th>Indicator (defanged)</th><th class="num">Cases</th><th class="num">Top score</th><th>Last seen</th></tr></thead>
+      <tbody>{% for i in rows %}<tr>
+        <td><span class="chip mute">{{ i.kind }}</span></td>
+        <td><code>{{ i.value | defang }}</code> <button class="copy" type="button" data-copy="{{ i.value | defang }}" title="Copy defanged value">{{ icon('copy') }}</button></td>
+        <td class="num">{{ i.cases }}</td>
+        <td class="num"><span class="badge {{ 'v-Malicious' if i.max_score >= 60 else 'v-Suspicious' if i.max_score >= 30 else 'v-Safe' }}">{{ i.max_score }}</span></td>
+        <td class="muted"><time datetime="{{ i.last_seen }}" data-ago>{{ i.last_seen | short_ts }}</time></td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    <div class="pager">Page {{ page }} of {{ pages }}<span class="spacer"></span>
+      {% if page > 1 %}<a class="btn sm" href="{{ url_with(page=page - 1) }}">Previous</a>{% endif %}
+      {% if page < pages %}<a class="btn sm" href="{{ url_with(page=page + 1) }}">Next</a>{% endif %}
+    </div>
+    {% else %}<div class="empty"><h3>No indicators yet</h3>URLs, domains, IPs and file hashes from analyzed emails collect here, so you can see repeat offenders and export a blocklist.</div>{% endif %}
+  </section>
+</div>
+{% endblock %}
